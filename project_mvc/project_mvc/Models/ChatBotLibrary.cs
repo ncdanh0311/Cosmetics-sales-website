@@ -59,12 +59,18 @@ namespace project_mvc.Models
                 var path = HostingEnvironment.MapPath("~/App_Data/chatbot-data.json");
                 if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
                 {
-                    return Array.Empty<ChatBotEntry>();
+                    var baseDirectory = AppDomain.CurrentDomain.BaseDirectory ?? string.Empty;
+                    path = Path.Combine(baseDirectory, "App_Data", "chatbot-data.json");
+
+                    if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                    {
+                        return Array.Empty<ChatBotEntry>();
+                    }
                 }
 
                 var raw = File.ReadAllText(path);
                 var data = JsonConvert.DeserializeObject<List<ChatBotEntry>>(raw);
-                return data ?? Array.Empty<ChatBotEntry>();
+                return data ?? new List<ChatBotEntry>();
             }
             catch
             {
