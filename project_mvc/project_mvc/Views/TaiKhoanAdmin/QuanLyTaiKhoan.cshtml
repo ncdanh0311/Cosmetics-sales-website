@@ -1,0 +1,707 @@
+﻿@model project_mvc.Models.QuanLyTaiKhoanViewModel
+
+@{
+    ViewBag.Title = "Quản lý tài khoản";
+    Layout = "~/Views/Shared/layoutAdmin.cshtml";
+    bool isEdit = ViewBag.IsEdit != null && (bool)ViewBag.IsEdit;
+}
+
+@section Styles {
+    <style>
+        /* =========================
+           PALETTE & BASE
+        ========================== */
+        :root {
+            --hs-primary: #ec4899; /* hồng pastel */
+            --hs-primary-soft: #fdf2f8;
+            --hs-primary-strong: #db2777;
+            --hs-border: #e5e7eb;
+            --hs-bg-page: #f5f7fb;
+            --hs-text-main: #111827;
+            --hs-text-muted: #6b7280;
+        }
+
+        body {
+            background-color: var(--hs-bg-page);
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+        .page-header-box {
+            background: linear-gradient(135deg, #f9a8d4 0%, #ec4899 45%, #db2777 100%);
+            padding: 20px 22px;
+            border-radius: 18px;
+            color: #fff;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.28);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .page-header-box::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0% 0%, rgba(255,255,255,.32) 0, transparent 55%), radial-gradient(circle at 100% 100%, rgba(251,113,133,.32) 0, transparent 60%);
+                opacity: .7;
+                pointer-events: none;
+            }
+
+        .page-header-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            font-size: 0.78rem;
+        }
+
+            .page-header-badge i {
+                font-size: 0.9rem;
+            }
+
+        .page-header-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+        }
+
+            .page-header-title i {
+                font-size: 1.3rem;
+            }
+
+        .page-header-sub {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.2rem;
+        }
+
+        .page-header-stat {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15,23,42,.18);
+            font-size: 0.8rem;
+            margin-top: 0.6rem;
+        }
+
+            .page-header-stat span.badge {
+                background: rgba(15,23,42,.9);
+                border-radius: 999px;
+            }
+
+        /* =========================
+           CARD FORM & TABLE
+        ========================== */
+        .form-card,
+        .table-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px 18px 20px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Sticky form bên trái */
+        .sticky-form {
+            position: sticky;
+            top: 84px;
+        }
+
+        .form-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .form-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at top right, rgba(236, 72, 153, 0.06), transparent 55%);
+                pointer-events: none;
+            }
+
+        .form-card-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-title-main {
+            font-weight: 650;
+            color: var(--hs-text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .card-title-main i {
+                color: var(--hs-primary);
+            }
+
+        .card-sub-text {
+            font-size: 0.8rem;
+            color: var(--hs-text-muted);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--hs-text-main);
+            font-size: 0.9rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px !important;
+            border-color: #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--hs-primary);
+                box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.25);
+            }
+
+        .text-danger.small {
+            font-size: 0.8rem;
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--hs-text-muted);
+        }
+
+        /* Danh sách tài khoản cuộn riêng (nếu nhiều) */
+        .account-list-scroll {
+            max-height: calc(100vh - 160px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+            .account-list-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .account-list-scroll::-webkit-scrollbar-track {
+                background: #f3f4f6;
+            }
+
+            .account-list-scroll::-webkit-scrollbar-thumb {
+                background: #cbd5f5;
+                border-radius: 999px;
+            }
+
+        /* TABLE */
+        .table-hover tbody tr {
+            cursor: pointer;
+            transition: background-color 0.12s ease, transform 0.05s ease;
+        }
+
+            .table-hover tbody tr:hover {
+                background-color: #fdf2f8;
+            }
+
+        .table > :not(caption) > * > * {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .table thead th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--hs-text-muted);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Cột STT */
+        .table td.stt-cell {
+            width: 44px;
+            text-align: center;
+            position: relative;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        /* Thanh ngang + đổi màu khi là dòng đang select */
+        .table tr.row-selected td.stt-cell {
+            color: #db2777; /* màu số */
+            font-weight: 700;
+        }
+
+            .table tr.row-selected td.stt-cell::after {
+                content: "";
+                position: absolute;
+                left: 6px;
+                right: 6px;
+                bottom: 3px;
+                height: 3px;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #fb7185, #ec4899, #db2777);
+            }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--hs-primary), var(--hs-primary-strong));
+            border: none;
+            border-radius: 999px;
+            padding: 7px 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, var(--hs-primary-strong), var(--hs-primary));
+            }
+
+        .btn-secondary {
+            border-radius: 999px;
+            font-size: 0.86rem;
+        }
+
+        .btn-icon-text i {
+            margin-right: 4px;
+        }
+
+        .btn-action-full {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            transition: 0.25s;
+        }
+
+        /* Sửa */
+        .btn-edit-full {
+            background: #fce7f3;
+            color: #db2777;
+        }
+
+            .btn-edit-full:hover {
+                background: #fbcfe8;
+                box-shadow: 0 4px 10px rgba(219, 39, 119, 0.25);
+            }
+
+        /* Xóa */
+        .btn-delete-full {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+            .btn-delete-full:hover {
+                background: #fecaca;
+                box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25);
+            }
+
+        /* Badge vai trò */
+        .badge-role {
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        /* Alert pill */
+        .alert {
+            border-radius: 999px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            font-size: 0.86rem;
+        }
+
+            .alert i {
+                margin-right: 6px;
+            }
+
+        /* Search box */
+        .search-input {
+            max-width: 320px;
+            width: 100%;
+        }
+
+            .search-input .form-control {
+                border-radius: 999px;
+            }
+
+            .search-input .input-group-text {
+                border-radius: 999px 0 0 999px;
+            }
+
+        @@media (max-width: 991.98px) {
+            .sticky-form {
+                position: static;
+            }
+
+            .account-list-scroll {
+                max-height: none;
+            }
+
+            .search-input {
+                max-width: 100%;
+            }
+        }
+    </style>
+}
+
+<div class="page-header-box">
+    <div class="page-header-inner d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+            <div class="page-header-badge mb-1">
+                <i class="bi bi-people"></i>
+                <span>Quản lý tài khoản người dùng</span>
+            </div>
+            <div class="page-header-title mb-1">
+                <i class="bi bi-person-badge-fill"></i>
+                <span>Quản lý tài khoản</span>
+            </div>
+            <div class="page-header-sub">
+                Thêm, chỉnh sửa, phân quyền tài khoản trên cùng một giao diện.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thông báo -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4 align-items-start">
+    <!-- Form thêm / sửa -->
+    <div class="col-lg-4">
+        <div class="form-card sticky-form">
+            <div class="form-card-inner">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="card-title-main mb-1">
+                            @if (Model.TaiKhoan.MAND == 0)
+                            {
+                                <span><i class="bi bi-person-plus-fill"></i> Thêm tài khoản mới</span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-pencil-square"></i> Sửa tài khoản (#@Model.TaiKhoan.MAND)</span>
+                            }
+                        </h5>
+                        <div class="card-sub-text">
+                            Điền đầy đủ thông tin, phân quyền rõ ràng để dễ quản lý hệ thống.
+                        </div>
+                    </div>
+                </div>
+
+                @using (Html.BeginForm("LuuTaiKhoan", "TaiKhoanAdmin", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.TaiKhoan.MAND)
+
+                    <div class="mb-3">
+                        <label class="form-label">Họ và tên</label>
+                        @Html.TextBoxFor(m => m.TaiKhoan.HOTEN,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "Nhập họ và tên",
+                                required = "required"
+                            })
+                        @Html.ValidationMessageFor(m => m.TaiKhoan.HOTEN, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        @Html.TextBoxFor(m => m.TaiKhoan.EMAIL,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "email",
+                                placeholder = "email@example.com",
+                                required = "required"
+                            })
+                        @Html.ValidationMessageFor(m => m.TaiKhoan.EMAIL, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu</label>
+                        @Html.TextBoxFor(m => m.TaiKhoan.MATKHAU, new
+                        {
+                            @class = "form-control",
+                            type = "password",
+                            placeholder = isEdit ? "Để nguyên nếu không đổi" : "Nhập mật khẩu"
+                        })
+                        @Html.ValidationMessageFor(m => m.TaiKhoan.MATKHAU, "", new { @class = "text-danger small" })
+
+                        @if (isEdit)
+                        {
+                            <small class="text-muted">
+                                Mật khẩu hiện tại đã được điền sẵn. Bạn có thể sửa nếu muốn.
+                            </small>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        @Html.TextBoxFor(m => m.TaiKhoan.SODT,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "0123456789",
+                                required = "required"
+                            })
+                        @Html.ValidationMessageFor(m => m.TaiKhoan.SODT, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ</label>
+                        @Html.TextBoxFor(m => m.TaiKhoan.DIACHI,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "Nhập địa chỉ"
+                            })
+                        @Html.ValidationMessageFor(m => m.TaiKhoan.DIACHI, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Vai trò</label>
+                        @Html.DropDownListFor(m => m.TaiKhoan.VAITRO,
+                            new SelectList(new[]
+                            {
+                                new { Value = "khachhang", Text = "Khách hàng" },
+                                new { Value = "admin", Text = "Quản trị viên" }
+                            }, "Value", "Text", Model.TaiKhoan.VAITRO),
+                            "-- Chọn vai trò --",
+                            new { @class = "form-select", required = "required" })
+                        @Html.ValidationMessageFor(m => m.TaiKhoan.VAITRO, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="d-flex justify-content-between gap-2 mt-3">
+                        <a href="@Url.Action("QuanLyTaiKhoan", "TaiKhoanAdmin", new { id = (int?)null })"
+                           class="btn btn-secondary btn-icon-text flex-fill">
+                            <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                        </a>
+
+                        <button type="submit" class="btn btn-primary btn-icon-text flex-fill">
+                            @if (Model.TaiKhoan.MAND == 0)
+                            {
+                                <span><i class="bi bi-check-circle"></i> Thêm mới</span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-save"></i> Lưu thay đổi</span>
+                            }
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách tài khoản -->
+    <div class="col-lg-8">
+        <div class="table-card account-list-scroll">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h5 class="mb-1">
+                        <i class="bi bi-list-ul me-1"></i> Danh sách tài khoản
+                    </h5>
+                    <div class="card-sub-text">
+                        Nhấp vào một dòng để chỉnh sửa nhanh tài khoản tương ứng.
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="search-input">
+                        @using (Html.BeginForm("QuanLyTaiKhoan", "TaiKhoanAdmin", FormMethod.Get))
+                        {
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-search"></i>
+                                </span>
+
+                                <input type="text"
+                                       name="search"
+                                       value="@Request["search"]"
+                                       class="form-control"
+                                       placeholder="Tìm theo tên, email hoặc số ĐT...">
+
+                                <button class="btn btn-primary">
+                                    Tìm
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <a href="@Url.Action("QuanLyTaiKhoan", "TaiKhoanAdmin", new { id = (int?)null })"
+                       class="btn btn-primary btn-icon-text btn-sm">
+                        <i class="bi bi-person-plus-fill"></i> Thêm tài khoản
+                    </a>
+                </div>
+            </div>
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>SĐT</th>
+                        <th>Mật khẩu</th>
+                        <th>Địa chỉ</th>
+                        <th>Vai trò</th>
+                        <th>Ngày tạo</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DanhSach != null && Model.DanhSach.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model.DanhSach)
+                        {
+                            var isSelectedRow = Model.TaiKhoan != null && item.MAND == Model.TaiKhoan.MAND;
+
+                            <tr class="@(isSelectedRow ? "row-selected" : "")"
+                                onclick="window.location='@Url.Action("QuanLyTaiKhoan", "TaiKhoanAdmin", new { id = item.MAND })'">
+                                <td class="stt-cell">@stt</td>
+                                <td>@item.HOTEN</td>
+                                <td>@item.EMAIL</td>
+                                <td>@item.SODT</td>
+                                <td>@item.MATKHAU</td>
+                                <td>@item.DIACHI</td>
+                                <td>
+                                    @if (item.VAITRO == "admin")
+                                    {
+                                        <span class="badge bg-danger badge-role">Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success badge-role">Khách hàng</span>
+                                    }
+                                </td>
+                                <td>@item.NGAYTAO.ToString("dd/MM/yyyy")</td>
+                                <td class="text-end">
+                                    <!-- Nút sửa -->
+                                    <a href="@Url.Action("QuanLyTaiKhoan", "TaiKhoanAdmin", new { id = item.MAND })"
+                                       class="btn-action-full btn-edit-full me-1"
+                                       title="Sửa tài khoản"
+                                       onclick="event.stopPropagation();">
+                                        <i class="bi bi-pencil-fill"></i> Sửa
+                                    </a>
+
+                                    <!-- Nút xóa: mở modal -->
+                                    <button type="button"
+                                            class="btn-action-full btn-delete-full btn-delete-account"
+                                            data-id="@item.MAND"
+                                            data-name="@item.HOTEN"
+                                            title="Xóa tài khoản"
+                                            onclick="event.stopPropagation();">
+                                        <i class="bi bi-trash-fill"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                <i class="bi bi-inboxes me-1"></i> Chưa có tài khoản nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa tài khoản (CHỈ 1 CÁI) -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmDeleteLabel">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Xác nhận xóa
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            @using (Html.BeginForm("XoaTaiKhoan", "TaiKhoanAdmin", FormMethod.Post, new { id = "formDeleteAccount" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", null, new { id = "deleteAccountId" })
+
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa tài khoản:</p>
+                    <p class="fw-bold mb-0" id="deleteAccountName"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash3-fill"></i> Xóa
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var deleteButtons = document.querySelectorAll(".btn-delete-account");
+            var deleteIdInput = document.getElementById("deleteAccountId");
+            var deleteNameSpan = document.getElementById("deleteAccountName");
+            var deleteModalEl = document.getElementById("confirmDeleteModal");
+            var deleteModal = null;
+
+            if (deleteModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                deleteModal = new bootstrap.Modal(deleteModalEl);
+            }
+
+            deleteButtons.forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    var id = this.getAttribute("data-id");
+                    var name = this.getAttribute("data-name");
+
+                    if (deleteIdInput) deleteIdInput.value = id;
+                    if (deleteNameSpan) deleteNameSpan.textContent = name;
+
+                    if (deleteModal) {
+                        deleteModal.show();
+                    }
+                });
+            });
+        });
+    </script>
+}

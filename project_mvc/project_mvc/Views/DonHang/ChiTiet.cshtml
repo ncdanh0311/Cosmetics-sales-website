@@ -1,0 +1,499 @@
+﻿@model project_mvc.Models.DONHANG
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng #" + Model.MADH;
+    Layout = "~/Views/Shared/View.cshtml";
+
+    // Màu hồng chính
+    string pink = "#ff4b93";
+
+    // Xác định trạng thái & bước
+    var status = Model.TRANGTHAI ?? "";
+    int step = 1;
+    bool isCanceled = status == "Đã hủy";
+
+    if (status == "Đang vận chuyển")
+    {
+        step = 2;
+    }
+    else if (status == "Giao thành công")
+    {
+        step = 3;
+    }
+    // "Chờ xác nhận" mặc định step = 1
+}
+
+<style>
+    .order-detail-page {
+        background: #f9fafb;
+        padding: 24px 18px;
+        border-radius: 22px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .order-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .order-sub {
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 14px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+    }
+
+    .status-pending   { background:#fff7ed; color:#c2410c; border-color:#fed7aa; }
+    .status-shipping  { background:#ecfdf5; color:#047857; border-color:#bbf7d0; }
+    .status-success   { background:#ecfeff; color:#0f766e; border-color:#a5f3fc; }
+    .status-cancel    { background:#fef2f2; color:#b91c1c; border-color:#fecaca; }
+
+    /* Timeline 4 trạng thái */
+    .order-steps {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 14px 0 18px;
+    }
+
+    .step-item {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        font-size: 0.85rem;
+        color: #9ca3af;
+    }
+
+    .step-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        right: -50%;
+        height: 3px;
+        background: #e5e7eb;
+        z-index: 0;
+    }
+
+    .step-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        margin: 0 auto 6px;
+        border: 3px solid #e5e7eb;
+        background: #ffffff;
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-item.active .step-dot {
+        border-color: @pink;
+        background: @pink;
+    }
+
+    .step-item.active .step-label {
+        color: @pink;
+        font-weight: 600;
+    }
+
+    .step-item.done .step-dot {
+        border-color: #22c55e;
+        background: #22c55e;
+    }
+
+    .step-item.done .step-label {
+        color: #16a34a;
+        font-weight: 600;
+    }
+
+    .order-steps.cancel-mode .step-item .step-dot {
+        border-color: #e5e7eb;
+        background: #ffffff;
+    }
+
+    .order-steps.cancel-mode .step-item .step-label {
+        color: #9ca3af;
+    }
+
+    .order-steps.cancel-mode .step-item.cancel .step-dot {
+        border-color: #ef4444;
+        background: #ef4444;
+    }
+
+    .order-steps.cancel-mode .step-item.cancel .step-label {
+        color: #b91c1c;
+        font-weight: 700;
+    }
+
+    .order-meta-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 16px 18px;
+        margin-bottom: 18px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .order-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 20px;
+        font-size: 0.95rem;
+    }
+
+    .meta-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #9ca3af;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .meta-total {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #e11d48;
+    }
+
+    .order-items-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 16px 18px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .order-items-title {
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #111827;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-items-title span {
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+    table.order-items-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+    .order-items-table thead {
+        background: #fdf2f8;
+    }
+
+    .order-items-table th {
+        padding: 10px;
+        text-align: left;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #9d174d;
+        border-bottom: 2px solid #fce7f3;
+    }
+
+    .order-items-table td {
+        padding: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #374151;
+        vertical-align: middle;
+    }
+
+    .order-items-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .col-img {
+        width: 70px;
+    }
+
+    .col-img img {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        object-fit: contain;
+        border: 1px solid #e5e7eb;
+        background: #ffffff;
+    }
+
+    .col-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .col-price {
+        font-weight: 600;
+        color: #e11d48;
+        white-space: nowrap;
+    }
+
+    .col-qty {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .col-subtotal {
+        font-weight: 700;
+        color: #be123c;
+        white-space: nowrap;
+    }
+
+    .order-footer {
+        margin-top: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-back-orders {
+        background-color: @pink;
+        border: none;
+        color: #ffffff !important;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-back-orders:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(236, 72, 153, 0.45);
+        text-decoration: none;
+    }
+
+    .btn-cancel-order {
+        background: #fee2e2;
+        border: 2px solid #fca5a5;
+        color: #b91c1c;
+        padding: 10px 28px;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: .5px;
+        box-shadow: 0 8px 18px rgba(248, 113, 113, 0.25);
+        transition: .2s ease;
+    }
+
+        .btn-cancel-order:hover {
+            background: #fecaca;
+            border-color: #f87171;
+            color: #7f1d1d;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(248, 113, 113, 0.35);
+        }
+
+
+    .btn-cancel-order:hover {
+        background: #fecaca;
+        color: #7f1d1d;
+    }
+
+    .order-footer-note {
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+</style>
+
+<div class="order-detail-page">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="order-header">
+        <div>
+            <div class="order-title">Đơn hàng #@Model.MADH</div>
+            <div class="order-sub">Đặt lúc @Model.NGAYDAT.ToString("HH:mm dd/MM/yyyy")</div>
+        </div>
+        <div>
+            @{
+                string pillClass = "status-pending";
+                if (status == "Đang vận chuyển") { pillClass = "status-shipping"; }
+                else if (status == "Giao thành công") { pillClass = "status-success"; }
+                else if (status == "Đã hủy") { pillClass = "status-cancel"; }
+            }
+            <span class="status-pill @pillClass">@Model.TRANGTHAI</span>
+        </div>
+    </div>
+
+    <!-- Timeline trạng thái -->
+    <div class="order-steps @(isCanceled ? "cancel-mode" : "")">
+        <div class="step-item @(step > 1 ? "done" : (step == 1 && !isCanceled ? "active" : ""))">
+            <div class="step-dot"></div>
+            <div class="step-label">Chờ xác nhận</div>
+        </div>
+        <div class="step-item @(step > 2 ? "done" : (step == 2 && !isCanceled ? "active" : ""))">
+            <div class="step-dot"></div>
+            <div class="step-label">Đang vận chuyển</div>
+        </div>
+        <div class="step-item @(step == 3 && !isCanceled ? "active" : "")">
+            <div class="step-dot"></div>
+            <div class="step-label">Giao thành công</div>
+        </div>
+        <div class="step-item cancel @(isCanceled ? "cancel" : "")">
+            <div class="step-dot"></div>
+            <div class="step-label">Đã hủy</div>
+        </div>
+    </div>
+
+    <div class="order-meta-card">
+        <div class="order-meta-grid">
+            <div>
+                <div class="meta-label">Mã đơn</div>
+                <div class="meta-value">#@Model.MADH</div>
+            </div>
+            <div>
+                <div class="meta-label">Ngày đặt</div>
+                <div class="meta-value">@Model.NGAYDAT.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+            <div>
+                <div class="meta-label">Địa chỉ giao</div>
+                <div class="meta-value">@Model.DIACHI_GIAO</div>
+            </div>
+            <div>
+                <div class="meta-label">Tổng tiền</div>
+                <div class="meta-total">@Model.TONGTIEN.ToString("N0") ₫</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-items-card">
+        <div class="order-items-title">
+            <span>Danh sách sản phẩm</span>
+            <span>@Model.CT_DONHANG.Count() sản phẩm</span>
+        </div>
+
+        <table class="order-items-table">
+            <thead>
+                <tr>
+                    <th class="col-img"></th>
+                    <th>Mã SP</th>
+                    <th>Sản phẩm</th>
+                    <th style="width:120px;">Đơn giá</th>
+                    <th style="width:90px; text-align:center;">Số lượng</th>
+                    <th style="width:130px;">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ct in Model.CT_DONHANG)
+                {
+                    var lineTotal = ct.DONGIA * ct.SOLUONG;
+                    var imgPath = (ct.SANPHAM != null && !string.IsNullOrEmpty(ct.SANPHAM.HINHANH))
+                        ? Url.Content("~/images/" + ct.SANPHAM.HINHANH)
+                        : Url.Content("~/images/no-image.png");
+
+                    <tr>
+                        <td class="col-img">
+                            <img src="@imgPath" alt="Ảnh sản phẩm" />
+                        </td>
+                        <td>@ct.MASP</td>
+                        <td class="col-name">
+                            @(ct.SANPHAM != null ? ct.SANPHAM.TENSP : "")
+                        </td>
+                        <td class="col-price">
+                            @ct.DONGIA.ToString("N0") ₫
+                        </td>
+                        <td class="col-qty">
+                            @ct.SOLUONG
+                        </td>
+                        <td class="col-subtotal">
+                            @lineTotal.ToString("N0") ₫
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="order-footer">
+        <a class="btn-back-orders" href="@Url.Action("Index", "DonHang")">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách đơn
+        </a>
+
+        @if (status == "Chờ xác nhận" || status == "Đang vận chuyển")
+        {
+            using (Html.BeginForm("Huy", "DonHang", FormMethod.Post, new { id = "formHuyDon", @class = "d-inline" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.MADH)
+
+                <button type="button"
+                        id="btnHuyDon"
+                        class="btn-cancel-order">
+                    ❌ Hủy đơn hàng
+                </button>
+            }
+
+        }
+
+        <div class="order-footer-note">
+            Nếu có thắc mắc, vui lòng liên hệ bộ phận hỗ trợ khách hàng.
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById("btnHuyDon")?.addEventListener("click", function () {
+
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Hủy đơn hàng',
+            cancelButtonText: 'Đóng',
+            reverseButtons: true,
+            customClass: {
+                popup: 'swal2-rounded'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit form sau khi xác nhận
+                document.getElementById("formHuyDon").submit();
+            }
+        });
+    });
+</script>
+

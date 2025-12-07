@@ -1,0 +1,449 @@
+﻿@model project_mvc.Models.ViewModels.ThongKeTongQuanDonHangViewModel
+
+@{
+    ViewBag.Title = "Thống kê đơn hàng";
+    Layout = "~/Views/Shared/layoutAdmin.cshtml";
+}
+
+<style>
+    .dashboard-wrap {
+        height: calc(100vh - 120px); /* trừ chiều cao header/topbar của layoutAdmin nếu có */
+        padding: 12px 10px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow: hidden; /* không cho cuộn trang */
+    }
+
+    /* Hàng KPI phía trên – chiều cao nhỏ */
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        flex: 0 0 auto;
+    }
+
+    .kpi-card {
+        background: linear-gradient(135deg, #ffe4ef, #ffffff);
+        border-radius: 14px;
+        padding: 10px 12px;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .kpi-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #9ca3af;
+        margin-bottom: 4px;
+    }
+
+    .kpi-value {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .kpi-sub {
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Vùng biểu đồ chiếm phần còn lại màn hình */
+    .charts-area {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        min-height: 0; /* quan trọng để chia đều theo 1fr */
+    }
+
+    .chart-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 10px 12px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* giúp flexbox co giãn trong grid */
+    }
+
+    .chart-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .chart-subtitle {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .chart-body {
+        flex: 1 1 auto;
+        position: relative;
+        min-height: 0;
+    }
+
+    .chart-body canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Bảng Top KH: co lại, cuộn riêng trong card */
+    .topkh-wrapper {
+        margin-top: 4px;
+        flex: 0 0 40%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .topkh-table-container {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    .topkh-table {
+        width: 100%;
+        font-size: 11px;
+    }
+
+    .topkh-table th,
+    .topkh-table td {
+        padding: 4px 4px;
+        white-space: nowrap;
+    }
+
+    .topkh-table thead {
+        border-bottom: 1px solid #e5e7eb;
+        position: sticky;
+        top: 0;
+        background: #ffffff;
+        z-index: 1;
+    }
+
+    .topkh-table tbody tr:nth-child(odd) {
+        background-color: #f9fafb;
+    }
+
+    /* Responsive cho màn nhỏ (nếu cần) */
+    @@media (max-height: 700px) {
+        .kpi-value {
+            font-size: 15px;
+        }
+
+        .chart-subtitle {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 1100px) {
+        .kpi-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .charts-area {
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(4, minmax(0, 1fr));
+        }
+    }
+</style>
+
+<div class="dashboard-wrap">
+    <!-- KPI -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-label">Doanh thu hôm nay</div>
+            <div class="kpi-value">@String.Format("{0:N0}", Model.DoanhThuHomNay) ₫</div>
+            <div class="kpi-sub">Tổng đơn (trừ hủy): @Model.TongSoDon</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Doanh thu tháng này</div>
+            <div class="kpi-value">@String.Format("{0:N0}", Model.DoanhThuThangNay) ₫</div>
+            <div class="kpi-sub">Năm hiện tại: @DateTime.Now.Year</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Doanh thu năm nay</div>
+            <div class="kpi-value">@String.Format("{0:N0}", Model.DoanhThuNamNay) ₫</div>
+            <div class="kpi-sub">Tổng: @String.Format("{0:N0}", Model.TongDoanhThu) ₫</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Tình trạng đơn hàng</div>
+            <div class="kpi-value">@Model.SoDonHuy đơn hủy</div>
+            <div class="kpi-sub">Tỉ lệ hủy: @Model.TiLeDonHuy %</div>
+        </div>
+    </div>
+
+    <!-- 4 biểu đồ trong 1 lưới 2x2 -->
+    <div class="charts-area">
+        <!-- Doanh thu 7 ngày -->
+        <div class="chart-card">
+            <div class="chart-title">Doanh thu 7 ngày gần nhất</div>
+            <div class="chart-subtitle">Tính tất cả đơn trừ "Đã hủy"</div>
+            <div class="chart-body">
+                <canvas id="chartDoanhThu7Ngay"></canvas>
+            </div>
+        </div>
+
+        <!-- Đơn theo trạng thái -->
+        <div class="chart-card">
+            <div class="chart-title">Đơn hàng theo trạng thái</div>
+            <div class="chart-subtitle">Tất cả đơn (kể cả đã hủy)</div>
+            <div class="chart-body">
+                <canvas id="chartTrangThai"></canvas>
+            </div>
+        </div>
+
+        <!-- Doanh thu 12 tháng -->
+        <div class="chart-card">
+            <div class="chart-title">Doanh thu 12 tháng gần nhất</div>
+            <div class="chart-subtitle">Theo tháng, trừ đơn hủy</div>
+            <div class="chart-body">
+                <canvas id="chartDoanhThu12Thang"></canvas>
+            </div>
+        </div>
+
+        <!-- Top 5 khách hàng -->
+        <div class="chart-card">
+            <div class="chart-title">Top 5 khách hàng chi tiêu nhiều nhất</div>
+            <div class="chart-subtitle">Theo tổng giá trị đơn (trừ đơn hủy)</div>
+            <div class="chart-body">
+                <canvas id="chartTopKhachHang"></canvas>
+            </div>
+
+            <div class="topkh-wrapper">
+                <div class="topkh-table-container">
+                    <table class="topkh-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Khách hàng</th>
+                                <th>Số đơn</th>
+                                <th>Tổng chi tiêu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int stt = 1;
+                                foreach (var kh in Model.TopKhachHang)
+                                {
+                                    <tr>
+                                        <td>@stt</td>
+                                        <td>@kh.HoTen</td>
+                                        <td>@kh.SoDonHang</td>
+                                        <td>@String.Format("{0:N0}", kh.TongTien) ₫</td>
+                                    </tr>
+;
+                                    stt++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        (function () {
+            // Dữ liệu từ Model
+            var dt7Labels = @Html.Raw(System.Web.Helpers.Json.Encode(Model.DoanhThu7Ngay.Labels));
+            var dt7Values = @Html.Raw(System.Web.Helpers.Json.Encode(Model.DoanhThu7Ngay.Values));
+
+            var dt12Labels = @Html.Raw(System.Web.Helpers.Json.Encode(Model.DoanhThu12Thang.Labels));
+            var dt12Values = @Html.Raw(System.Web.Helpers.Json.Encode(Model.DoanhThu12Thang.Values));
+
+            var ttLabels = @Html.Raw(System.Web.Helpers.Json.Encode(Model.DonHangTheoTrangThai.Labels));
+            var ttValues = @Html.Raw(System.Web.Helpers.Json.Encode(Model.DonHangTheoTrangThai.Values));
+
+            var topLabels = @Html.Raw(System.Web.Helpers.Json.Encode(Model.TopKhachHang.Select(x => x.HoTen).ToList()));
+            var topValues = @Html.Raw(System.Web.Helpers.Json.Encode(Model.TopKhachHang.Select(x => x.TongTien).ToList()));
+
+            // Biểu đồ 7 ngày - Bar
+            var ctx7 = document.getElementById('chartDoanhThu7Ngay').getContext('2d');
+            new Chart(ctx7, {
+                type: 'bar',
+                data: {
+                    labels: dt7Labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: dt7Values,
+                        borderWidth: 1,
+                        backgroundColor: 'rgba(255, 118, 167, 0.5)',
+                        borderColor: 'rgba(255, 118, 167, 1)',
+                        borderRadius: 8,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    if (value >= 1000000) return (value / 1000000) + 'M';
+                                    if (value >= 1000) return (value / 1000) + 'K';
+                                    return value;
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    var v = context.parsed.y || 0;
+                                    return ' ' + v.toLocaleString('vi-VN') + ' ₫';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Biểu đồ 12 tháng - Line
+            var ctx12 = document.getElementById('chartDoanhThu12Thang').getContext('2d');
+            new Chart(ctx12, {
+                type: 'line',
+                data: {
+                    labels: dt12Labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: dt12Values,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.35,
+                        backgroundColor: 'rgba(255, 192, 203, 0.35)',
+                        borderColor: 'rgba(255, 118, 167, 1)',
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    if (value >= 1000000) return (value / 1000000) + 'M';
+                                    if (value >= 1000) return (value / 1000) + 'K';
+                                    return value;
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    var v = context.parsed.y || 0;
+                                    return ' ' + v.toLocaleString('vi-VN') + ' ₫';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Biểu đồ trạng thái đơn - Doughnut
+            var ctxTT = document.getElementById('chartTrangThai').getContext('2d');
+            new Chart(ctxTT, {
+                type: 'doughnut',
+                data: {
+                    labels: ttLabels,
+                    datasets: [{
+                        data: ttValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    var label = context.label || '';
+                                    var v = context.parsed || 0;
+                                    return ' ' + label + ': ' + v + ' đơn';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Biểu đồ Top khách hàng - Horizontal Bar
+            var ctxTop = document.getElementById('chartTopKhachHang').getContext('2d');
+            new Chart(ctxTop, {
+                type: 'bar',
+                data: {
+                    labels: topLabels,
+                    datasets: [{
+                        label: 'Tổng chi tiêu (VNĐ)',
+                        data: topValues,
+                        borderWidth: 1,
+                        backgroundColor: 'rgba(255, 158, 180, 0.7)',
+                        borderColor: 'rgba(255, 118, 167, 1)',
+                        borderRadius: 6,
+                        maxBarThickness: 26
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    if (value >= 1000000) return (value / 1000000) + 'M';
+                                    if (value >= 1000) return (value / 1000) + 'K';
+                                    return value;
+                                }
+                            }
+                        },
+                        y: { grid: { display: false } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    var v = context.parsed.x || 0;
+                                    return ' ' + v.toLocaleString('vi-VN') + ' ₫';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        })();
+    </script>
+}

@@ -1,0 +1,382 @@
+﻿@model IEnumerable<project_mvc.Models.SANPHAM>
+@using project_mvc.Models
+@using System.Linq
+@using System.Collections.Generic
+
+@{
+    ViewBag.Title = "ShowSP";
+    Layout = "~/Views/Shared/View.cshtml";
+
+    var search = ViewBag.Search as string ?? "";
+    var minPrice = ViewBag.MinPrice as string ?? "";
+    var maxPrice = ViewBag.MaxPrice as string ?? "";
+    var selectedBrands = ViewBag.Brands as string ?? "";
+    var selectedCategories = ViewBag.Categories as string ?? "";
+    var hasPromotion = ViewBag.HasPromotion as string ?? "";
+    var stock = ViewBag.Stock as string ?? "all";
+    var sortBy = ViewBag.SortBy as string ?? "";
+
+    var brandArray = string.IsNullOrWhiteSpace(selectedBrands)
+        ? new string[] { }
+        : selectedBrands.Split(',');
+
+    var categoryArray = string.IsNullOrWhiteSpace(selectedCategories)
+        ? new string[] { }
+        : selectedCategories.Split(',');
+
+    var brandSet = new HashSet<string>(brandArray);
+    var categorySet = new HashSet<string>(categoryArray);
+
+    // ====== Paging ======
+    var pageQuery = Request["page"];
+
+    int page = 1; int pageSize = 16;
+    if (!string.IsNullOrWhiteSpace(pageQuery)) { int.TryParse(pageQuery, out page); if (page <= 0) { page = 1; } }
+
+    var allList = Model?.ToList() ?? new List<project_mvc.Models.SANPHAM>();
+    int totalItems = (int)ViewBag.TotalItems;
+    int totalPages = (int)ViewBag.TotalPages;
+    if (page > totalPages) { page = totalPages; }
+    page = (int)ViewBag.Page;
+
+    // Model đã được phân trang ở Controller → dùng luôn
+    var paged = allList;
+
+    // ====== Facets ======
+    var allBrands = (ViewBag.AllBrands as IEnumerable<string>) ?? Enumerable.Empty<string>();
+    var allCategories = (ViewBag.AllCategories as IEnumerable<CategoryFacetVM>) ?? Enumerable.Empty<CategoryFacetVM>();
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/style-products.css" />
+
+<div class="container-lg py-4">
+    <form method="get" action="@Url.Action("ShowSP","SanPham")" id="filterForm">
+        <input type="hidden" name="brands" id="brandsInput" value="@selectedBrands" />
+        <input type="hidden" name="categories" id="categoriesInput" value="@selectedCategories" />
+
+        <div class="row g-4">
+            <!-- ===== Sidebar ===== -->
+            <div class="col-lg-3">
+                <div class="tfs-filter p-4" style="position:sticky;top:20px;">
+                    <h5 class="fw-bold text-dark mb-3">
+                        <i class="fa-solid fa-filter text-danger me-2"></i>Bộ lọc tìm kiếm
+                    </h5>
+
+                    <!-- Search -->
+                    <div class="section">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-magnifying-glass me-1"></i>Tìm kiếm sản phẩm
+                        </label>
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Nhập tên, thương hiệu..." value="@search" />
+                    </div>
+
+                    <!-- Price -->
+                    <div class="section">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-tag text-danger me-1"></i>Khoảng giá
+                        </label>
+                        <div class="d-flex gap-2 mb-2">
+                            <input type="number" name="minPrice" class="form-control" placeholder="Min" min="0" value="@minPrice" step="100000" />
+                            <input type="number" name="maxPrice" class="form-control" placeholder="Max" min="0" value="@maxPrice" step="100000" />
+                        </div>
+                    </div>
+
+                    <!-- Brands -->
+                    <div class="section">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-building text-danger me-1"></i>Thương hiệu
+                        </label>
+                        <input type="text" class="form-control mb-2" id="brandSearch" placeholder="Tìm thương hiệu..." />
+                        <div class="brand-scroll">
+                            @foreach (var brand in allBrands)
+                            {
+                                var isChecked = brandSet.Contains(brand);
+                                <div class="form-check mb-2 brand-item">
+                                    <input class="form-check-input brand-checkbox"
+                                           type="checkbox"
+                                           value="@brand"
+                                           id="brand_@brand"
+                                           @(isChecked ? "checked" : "") />
+
+                                    <label class="form-check-label" for="brand_@brand">
+                                        @brand
+                                        <span class="badge bg-light text-muted ms-1" style="font-size:var(--fs-xxs);">
+                                            @allList.Count(x => x.THUONGHIEU != null && x.THUONGHIEU.TENTH == brand)
+                                        </span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="section">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-list text-danger me-1"></i>Danh mục
+                        </label>
+                        <div>
+                            @foreach (var cat in allCategories)
+                            {
+                                var catId = cat.MADM ?? "";
+                                var isChecked = categorySet.Contains(catId);
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input category-checkbox" type="checkbox"
+                                           value="@catId" id="cat_@catId" @(isChecked ? "checked" : "") />
+                                    <label class="form-check-label" for="cat_@catId">
+                                        @cat.TenDM
+                                        <span class="badge bg-light text-muted ms-1">@cat.Count</span>
+                                    </label>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                    <!-- Promotion -->
+                    <div class="section">
+                        <label class="form-label fw-semibold"><i class="fa-solid fa-gift text-danger me-1"></i>Khuyến mãi</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="hasPromotion" value="true"
+                                   id="hasPromotion" @(hasPromotion == "true" ? "checked" : "") />
+                            <label class="form-check-label" for="hasPromotion">
+                                <i class="fa-solid fa-fire text-danger me-1"></i>Có khuyến mãi
+                                <span class="badge bg-danger text-white ms-1" style="font-size:var(--fs-xxs);">
+                                    @allList.Count(x => x.KHUYENMAI > 0)
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="section">
+                        <label class="form-label fw-semibold"><i class="fa-solid fa-boxes text-danger me-1"></i>Tình trạng kho</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="stock" value="all" id="stockAll" @(stock == "all" ? "checked" : "") />
+                            <label class="form-check-label" for="stockAll">Tất cả</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="stock" value="available" id="stockAvailable" @(stock == "available" ? "checked" : "") />
+                            <label class="form-check-label" for="stockAvailable"><i class="fa-solid fa-check text-success me-1"></i>Còn hàng</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="stock" value="out" id="stockOut" @(stock == "out" ? "checked" : "") />
+                            <label class="form-check-label" for="stockOut"><i class="fa-solid fa-times text-danger me-1"></i>Hết hàng</label>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger" style="border-radius:10px;">
+                            <i class="fa-solid fa-search me-1"></i>Áp dụng bộ lọc
+                        </button>
+                        <a href="@Url.Action("ShowSP","SanPham")" class="btn btn-outline-danger btn-sm" style="border-radius:10px;">
+                            <i class="fa-solid fa-redo me-1"></i>Xóa bộ lọc
+                        </a>
+                    </div>
+
+                    <hr class="hr-dashed" />
+
+                    <!-- Stats -->
+                    <div class="p-3 rounded-3" style="background:linear-gradient(135deg,#fef3f1 0%,#fff0ed 100%);border-left:4px solid var(--tfs-primary);">
+                        <p class="text-dim mb-1" style="font-size:var(--fs-xs);"><i class="fa-solid fa-chart-bar me-1"></i>Thông tin</p>
+                        <p class="mb-1 fw-bold" style="font-size:var(--fs-md);color:#111827;">@totalItems sản phẩm</p>
+                        <p class="mb-0 text-dim" style="font-size:var(--fs-xs);">Trang <strong>@page</strong> / <strong>@totalPages</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Grid ===== -->
+            <div class="col-lg-9">
+                <!-- top bar -->
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3" style="border-bottom:1px solid var(--tfs-border);">
+                    <div class="text-dim" style="font-size:var(--fs-sm);">Hiển thị <span class="fw-bold text-dark">@paged.Count</span> / <span class="fw-bold text-dark">@totalItems</span> sản phẩm</div>
+                    <div>
+                        <select name="sortBy" class="form-select form-select-sm" style="min-width:220px;border-radius:10px;" onchange="this.form.submit()">
+                            <option value="">— Sắp xếp —</option>
+                            <option value="price_asc" @(sortBy == "price_asc" ? "selected" : "")>Giá thấp đến cao</option>
+                            <option value="price_desc" @(sortBy == "price_desc" ? "selected" : "")>Giá cao đến thấp</option>
+                            <option value="name_asc" @(sortBy == "name_asc" ? "selected" : "")>Tên A-Z</option>
+                            <option value="name_desc" @(sortBy == "name_desc" ? "selected" : "")>Tên Z-A</option>
+                            <option value="newest" @(sortBy == "newest" ? "selected" : "")>Mới nhất</option>
+                            <option value="bestseller" @(sortBy == "bestseller" ? "selected" : "")>Bán chạy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- grid 4x4 -->
+                <div class="row g-3 g-md-4">
+                    @foreach (var item in paged)
+                    {
+                        var detailsUrl = Url.Action("Details", "SanPham") + "?id=" + item.MASP;
+
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="tfs-card h-100 clickable-card" role="button" tabindex="0" data-url="@detailsUrl">
+                                <div class="tfs-media">
+                                    <div class="tfs-media-inner">
+                                        <img class="tfs-img" src="@Url.Content("~/images/" + item.HINHANH)" alt="@item.TENSP" />
+                                        <span class="tfs-badge-hot"><i class="fa-solid fa-fire me-1"></i>Hot</span>
+                                        @if (item.KHUYENMAI > 0)
+                                        {
+                                            <span class="tfs-badge-sale">-@item.KHUYENMAI%</span>
+                                        }
+
+                                        <button class="tfs-wishlist" type="button">
+                                            <i class="fa-regular fa-heart text-danger"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="tfs-body">
+                                    <h6 class="tfs-name">
+                                        <a href="@detailsUrl" class="text-decoration-none text-dark">@item.TENSP</a>
+                                    </h6>
+
+                                    <div class="tfs-rating mb-1">
+                                        <span><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span>
+                                        <small>4.5 • 1.7k</small>
+                                    </div>
+
+                                    <div class="tfs-price">
+                                        <span class="tfs-price-main">@String.Format("{0:N0}", item.GIABAN) ₫</span>
+                                        @if (item.KHUYENMAI > 0)
+                                        {
+                                            var oldPrice = item.GIABAN / (1 - item.KHUYENMAI / 100m);
+                                            <span class="tfs-price-old">@String.Format("{0:N0}", oldPrice) ₫</span>
+                                        }
+                                    </div>
+
+
+                                    <div class="tfs-meta mb-3">
+                                        <span title="Thương hiệu">
+                                            <i class="fa-solid fa-tag me-1"></i>@item.THUONGHIEU.TENTH
+                                        </span>
+                                        <span title="Còn trong kho"><i class="fa-solid fa-box me-1"></i>@item.SOLUONG</span>
+                                    </div>
+
+                                    <div class="d-flex gap-2 mt-auto">
+                                        <a href="@detailsUrl" class="tfs-btn flex-grow-1">
+                                            <i class="fa-solid fa-eye me-1"></i> Xem chi tiết
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- empty -->
+                    @if (!paged.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fa-solid fa-inbox text-muted" style="font-size:48px;margin-bottom:10px;display:block;"></i>
+                            <p class="text-muted fw-semibold">Không tìm thấy sản phẩm phù hợp</p>
+                            <small class="text-muted">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</small>
+                        </div>
+                    }
+
+                    <!-- pagination -->
+                    @if (totalPages > 1)
+                    {
+                        <nav class="mt-4 mt-md-5">
+                            <div class="tfs-pagination">
+                                @{
+                                    var prevDisabled = page <= 1 ? "disabled" : "";
+                                }
+                                <button type="submit" name="page" value="@(page - 1)" class="tfs-page @prevDisabled" @(page <= 1 ? "disabled" : "")>
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+
+                                @{
+                                    int window = 2;
+                                    int start = Math.Max(1, page - window);
+                                    int end = Math.Min(totalPages, page + window);
+
+                                    if (start > 1)
+                                    {
+                                        <button type="submit" name="page" value="1" class="tfs-page">1</button>
+                                        if (start > 2)
+                                        { <span class="tfs-page disabled">…</span>;
+                                        }
+                                    }
+
+                                    for (int i = start; i <= end; i++)
+                                    {
+                                        var active = i == page ? "active" : "";
+                                        <button type="submit" name="page" value="@i" class="tfs-page @active">@i</button>
+                                    }
+
+                                    if (end < totalPages)
+                                    {
+                                        if (end < totalPages - 1)
+                                        { <span class="tfs-page disabled">…</span>;
+                                        }
+                                        <button type="submit" name="page" value="@totalPages" class="tfs-page">@totalPages</button>
+                                    }
+                                }
+
+                                @{
+                                    var nextDisabled = page >= totalPages ? "disabled" : "";
+                                }
+                                <button type="submit" name="page" value="@(page + 1)" class="tfs-page @nextDisabled" @(page >= totalPages ? "disabled" : "")>
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </nav>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+@*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>*@
+<script>
+    // ===== Brand search (có guard) =====
+    (() => {
+        const brandSearch = document.getElementById('brandSearch');
+        if (brandSearch) {
+            brandSearch.addEventListener('input', function (e) {
+                const searchText = e.target.value.toLowerCase();
+                document.querySelectorAll('.brand-item').forEach(item => {
+                    item.style.display = item.textContent.toLowerCase().includes(searchText) ? 'block' : 'none';
+                });
+            });
+        }
+    })();
+
+    // ===== Build hidden inputs =====
+    function updateBrandsInput() {
+        const selected = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
+        const el = document.getElementById('brandsInput'); if (el) el.value = selected.join(',');
+    }
+    function updateCategoriesInput() {
+        const selected = Array.from(document.querySelectorAll('.category-checkbox:checked')).map(cb => cb.value);
+        const el = document.getElementById('categoriesInput'); if (el) el.value = selected.join(',');
+    }
+    document.querySelectorAll('.brand-checkbox').forEach(cb => cb.addEventListener('change', updateBrandsInput));
+    document.querySelectorAll('.category-checkbox').forEach(cb => cb.addEventListener('change', updateCategoriesInput));
+    updateBrandsInput(); updateCategoriesInput();
+
+    // ===== Click card -> Details (trừ wishlist / button / link con) =====
+    document.addEventListener('click', function (e) {
+        const card = e.target.closest('.clickable-card');
+        if (!card) return;
+        if (e.target.closest('.tfs-wishlist,button,a')) return;
+        const url = card.dataset.url;
+        if (url) window.location.href = url;
+    });
+    document.addEventListener('keydown', function (e) {
+        const card = e.target.closest('.clickable-card');
+        if (!card) return;
+        if (e.key === 'Enter' || e.code === 'Space') {
+            e.preventDefault();
+            const url = card.dataset.url;
+            if (url) window.location.href = url;
+        }
+    });
+</script>

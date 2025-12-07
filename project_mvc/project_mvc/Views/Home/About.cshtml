@@ -1,0 +1,2938 @@
+﻿@model project_mvc.Models.HomeAboutViewModel
+
+@{
+    ViewBag.Title = "Trang chủ - The Face Shop";
+    Layout = "~/Views/Shared/View.cshtml";
+
+    // Helper format tiền
+    Func<decimal?, string> money = v =>
+    {
+        var value = v ?? 0;
+        return string.Format(
+            System.Globalization.CultureInfo.GetCultureInfo("vi-VN"),
+            "{0:N0} ₫", value
+        );
+    };
+}
+
+@section Styles {
+    <style>
+
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .hs-section {
+            padding-top: 2.5rem;
+            padding-bottom: 2.5rem;
+        }
+
+        @@media (min-width: 992px) {
+            .hs-section {
+                padding-top: 3.5rem;
+                padding-bottom: 3.5rem;
+            }
+        }
+
+        .hs-section-title {
+            font-size: 1.1rem;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--hs-accent);
+            font-weight: 600;
+            margin-bottom: .4rem;
+        }
+
+        .hs-section-heading {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--hs-dark);
+            letter-spacing: -0.03em;
+        }
+
+        @@media (min-width: 992px) {
+            .hs-section-heading {
+                font-size: 2rem;
+            }
+        }
+
+        .hs-section-description {
+            color: var(--hs-muted);
+            font-size: .97rem;
+        }
+
+        /* Top announcement / USP strip */
+        .hs-top-strip {
+            background: linear-gradient(90deg, #fee2f2, #e0f2ff);
+            border-radius: 999px;
+            padding: .35rem .9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .65rem;
+            font-size: .82rem;
+            font-weight: 500;
+            color: #4b5563;
+            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        .hs-dot {
+            width: .55rem;
+            height: .55rem;
+            border-radius: 999px;
+            background: var(--hs-accent);
+            box-shadow: 0 0 0 6px rgba(255, 76, 121, 0.25);
+        }
+
+        .hs-top-strip-badge {
+            padding: .25rem .65rem;
+            border-radius: 999px;
+            background: rgba(17, 24, 39, 0.9);
+            color: #f9fafb;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .14em;
+        }
+
+        /* HERO */
+        .hs-hero {
+            background: var(--hs-hero-bg);
+            border-radius: 2.5rem;
+            padding: 1.6rem 1.4rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--hs-shadow-soft);
+        }
+
+        @@media (min-width: 992px) {
+            .hs-hero {
+                padding: 2.6rem 2.4rem;
+            }
+        }
+
+        .hs-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.7) 0, transparent 60%), radial-gradient(circle at 100% 80%, rgba(255, 255, 255, 0.7) 0, transparent 60%);
+            opacity: .9;
+            pointer-events: none;
+        }
+
+        .hs-hero-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hs-hero-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #020617;
+            margin-bottom: .75rem;
+        }
+
+        @@media (min-width: 768px) {
+            .hs-hero-title {
+                font-size: 2.4rem;
+            }
+        }
+
+        @@media (min-width: 1200px) {
+            .hs-hero-title {
+                font-size: 2.8rem;
+            }
+        }
+
+        .hs-hero-title span.highlight {
+            background: linear-gradient(120deg, #ff4c79, #f97316);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hs-hero-subtitle {
+            font-size: .98rem;
+            color: #4b5563;
+            max-width: 32rem;
+        }
+
+        .hs-hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .45rem;
+            margin-top: .85rem;
+            margin-bottom: .75rem;
+        }
+
+        .hs-hero-badge {
+            border-radius: 999px;
+            padding: .25rem .8rem;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: .78rem;
+            font-weight: 500;
+            color: #374151;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+            .hs-hero-badge i {
+                font-size: .85rem;
+                color: var(--hs-accent);
+            }
+
+        .hs-hero-cta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .7rem;
+            align-items: center;
+            margin-top: 1.1rem;
+        }
+
+        .hs-btn-primary {
+            border-radius: 999px;
+            padding: .55rem 1.5rem;
+            border: none;
+            font-size: .96rem;
+            font-weight: 600;
+            color: #f9fafb;
+            background: linear-gradient(120deg, #1c4b82, #0f172a);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+            text-decoration: none;
+        }
+
+            .hs-btn-primary i {
+                font-size: .9rem;
+            }
+
+        .hs-btn-outline {
+            border-radius: 999px;
+            padding: .5rem 1.4rem;
+            border: 1px dashed rgba(15, 23, 42, 0.18);
+            background: rgba(255, 255, 255, 0.9);
+            font-size: .9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            color: #020617;
+            text-decoration: none;
+        }
+
+            .hs-btn-outline i {
+                color: var(--hs-primary);
+            }
+
+        .hs-hero-meta {
+            margin-top: 1.3rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.1rem;
+            font-size: .8rem;
+        }
+
+        .hs-hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: #4b5563;
+        }
+
+            .hs-hero-meta-item strong {
+                color: #111827;
+                font-weight: 600;
+            }
+
+        .hs-hero-meta-avatar-group {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .hs-hero-meta-avatar {
+            width: 1.7rem;
+            height: 1.7rem;
+            border-radius: 999px;
+            border: 2px solid #f9fafb;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.45);
+        }
+
+            .hs-hero-meta-avatar + .hs-hero-meta-avatar {
+                margin-left: -.55rem;
+            }
+
+        .hs-hero-meta-count {
+            margin-left: .3rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* HERO RIGHT MEDIA */
+        .hs-hero-media-card {
+            border-radius: 1.8rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            padding: .75rem;
+            box-shadow: var(--hs-shadow-subtle);
+            position: relative;
+        }
+
+        .hs-hero-media-main {
+            border-radius: 1.4rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hs-hero-main-img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+            max-height: 330px;
+        }
+
+        .hs-hero-media-pill {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            background: rgba(15, 23, 42, 0.82);
+            color: #f9fafb;
+            border-radius: 999px;
+            padding: .35rem .85rem;
+            font-size: .78rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+            .hs-hero-media-pill i {
+                color: #f97316;
+            }
+
+        .hs-hero-media-label {
+            position: absolute;
+            right: 1rem;
+            bottom: .9rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.92);
+            padding: .5rem .8rem;
+            font-size: .8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            color: #111827;
+        }
+
+            .hs-hero-media-label span {
+                font-weight: 600;
+            }
+
+        .hs-hero-float-card {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-45%);
+            background: #0f172a;
+            color: #f9fafb;
+            border-radius: 1.2rem;
+            padding: .6rem .85rem;
+            font-size: .75rem;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.45);
+            max-width: 11.2rem;
+        }
+
+        .hs-hero-float-title {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            margin-bottom: .25rem;
+        }
+
+            .hs-hero-float-title span {
+                font-weight: 600;
+                font-size: .78rem;
+            }
+
+            .hs-hero-float-title i {
+                color: #facc15;
+            }
+
+        .hs-hero-float-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .2rem;
+            padding: .15rem .5rem;
+            border-radius: 999px;
+            border: 1px dashed rgba(248, 250, 252, 0.5);
+            font-size: .7rem;
+            margin-bottom: .25rem;
+        }
+
+        .hs-hero-float-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: .72rem;
+        }
+
+            .hs-hero-float-meta strong {
+                font-weight: 700;
+            }
+
+        /* CATEGORY QUICK LINKS */
+        .hs-quick-cats {
+            background: #0f172a;
+            border-radius: 1.8rem;
+            padding: .75rem .95rem;
+            margin-top: 1.25rem;
+            color: #e5e7eb;
+        }
+
+        @@media (min-width: 992px) {
+            .hs-quick-cats {
+                padding: .9rem 1.25rem;
+                margin-top: 1.8rem;
+            }
+        }
+
+        .hs-quick-cats-title {
+            font-size: .8rem;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: .55rem;
+            font-weight: 600;
+        }
+
+        .hs-quick-cats-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .45rem;
+        }
+
+        .hs-quick-cat-pill {
+            border-radius: 999px;
+            padding: .3rem .85rem;
+            font-size: .82rem;
+            border: 1px solid rgba(249, 250, 251, 0.15);
+            background: rgba(15, 23, 42, 0.7);
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            color: #e5e7eb;
+            text-decoration: none;
+        }
+
+            .hs-quick-cat-pill i {
+                font-size: .85rem;
+                color: #fbbf24;
+            }
+
+            .hs-quick-cat-pill span.hot {
+                font-size: .7rem;
+                padding: .1rem .45rem;
+                border-radius: 999px;
+                background: rgba(248, 113, 113, 0.18);
+                color: #fecaca;
+            }
+
+        /* SCROLL NAV */
+        .hs-scroll-nav {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: .6rem;
+            padding-bottom: .4rem;
+            scrollbar-width: thin;
+        }
+
+            .hs-scroll-nav::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .hs-scroll-nav::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .hs-scroll-nav::-webkit-scrollbar-thumb {
+                background: rgba(148, 163, 184, 0.7);
+                border-radius: 999px;
+            }
+
+        .hs-scroll-nav-pill {
+            white-space: nowrap;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            padding: .3rem .8rem;
+            font-size: .78rem;
+            color: #4b5563;
+            background: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            text-decoration: none;
+        }
+
+            .hs-scroll-nav-pill i {
+                font-size: .85rem;
+                color: var(--hs-accent);
+            }
+
+            .hs-scroll-nav-pill.active {
+                background: #0f172a;
+                color: #f9fafb;
+                border-color: #0f172a;
+            }
+
+        /* FLASH SALE */
+        /* ===================== FLASH SALE WRAPPER (HỒNG LUXURY) ===================== */
+        /* ===================== FLASH SALE WRAPPER (HỒNG LUXURY) ===================== */
+        .hs-flash-wrapper {
+            border-radius: 2rem;
+            background: linear-gradient(135deg, #ffe4ef 0%, #ff9abb 40%, #ff6f9a 100%);
+            color: #fff;
+            padding: 1.7rem 1.3rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(255, 111, 154, 0.22);
+        }
+
+            .hs-flash-wrapper::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.30) 0, transparent 55%), radial-gradient(circle at 100% 100%, rgba(255, 158, 195, 0.38) 0, transparent 55%);
+                opacity: .65;
+                pointer-events: none;
+            }
+
+        .hs-flash-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===================== FLASH LABEL – TITLE – SUB ===================== */
+        .hs-flash-label {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-transform: uppercase;
+            letter-spacing: .18em;
+            font-size: .8rem;
+            color: #ffe3ef;
+        }
+
+            .hs-flash-label i {
+                color: #ffebf4;
+            }
+
+        .hs-flash-title {
+    font-size: 2rem;              /* tăng cỡ chữ lớn hơn */
+    font-weight: 900;             /* siêu đậm */
+    line-height: 1.25;
+    background: linear-gradient(90deg,
+                #ff004c,         /* đỏ neon nổi bật */
+                #ff3d9a,         /* hồng neon */
+                #b300ff);        /* tím đậm tương phản */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(255,0,80,0.25));
+}
+
+/* Responsive cho mobile */
+@@media (max-width: 576px) {
+    .hs-flash-title {
+        font-size: 1.65rem;
+    }
+}
+
+        .hs-flash-sub {
+            font-size: .92rem;
+            color: #ffddea;
+        }
+
+        /* ===================== COUNTDOWN ===================== */
+        .hs-flash-countdown {
+            display: inline-flex;
+            gap: .3rem;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            padding: .25rem .6rem;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            font-size: .78rem;
+            margin-top: .3rem;
+        }
+
+            .hs-flash-countdown span.badge {
+                border-radius: .7rem;
+                padding: .15rem .35rem;
+                background: rgba(255, 255, 255, 0.25);
+                font-weight: 600;
+                min-width: 1.9rem;
+                text-align: center;
+                color: #fff;
+            }
+
+        /* ===================== LINK VIEW ALL ===================== */
+        .hs-flash-link-all {
+            font-size: .86rem;
+            color: #ffe6f3;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+        }
+
+        /* ===================== PRODUCT CARD – HỒNG NHẠT + TÍM ĐẬM ===================== */
+        .hs-product-card {
+            border-radius: 1.3rem;
+            background: linear-gradient(150deg, #fff1f7, #f4e9ff);
+            border: 1px solid rgba(88, 28, 135, 0.46);
+            padding: .55rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 14px 32px rgba(76, 29, 149, 0.26), 0 6px 18px rgba(236, 72, 153, 0.16);
+        }
+
+        /* ===================== PRODUCT MEDIA ===================== */
+        .hs-product-media {
+            border-radius: 1.2rem;
+            overflow: hidden;
+            position: relative;
+            background: radial-gradient(circle at 20% 0%, #ffe0f0, #14051f 92%);
+        }
+
+            .hs-product-media img {
+                width: 100%;
+                display: block;
+                object-fit: contain;
+                transition: transform .4s ease;
+            }
+
+        .hs-product-card:hover .hs-product-media img {
+            transform: scale(1.04) translateY(-3px);
+        }
+
+        /* ===================== BADGES ===================== */
+        .hs-product-badge-sale {
+            position: absolute;
+            left: .6rem;
+            top: .55rem;
+            border-radius: 999px;
+            padding: .2rem .6rem;
+            background: rgba(255, 140, 185, 0.98);
+            color: #fff;
+            font-size: .78rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+        }
+
+        .hs-product-badge-tag {
+            position: absolute;
+            right: .55rem;
+            top: .55rem;
+            border-radius: 999px;
+            padding: .2rem .55rem;
+            background: rgba(24, 12, 40, 0.92);
+            color: #ffe7f4;
+            font-size: .99rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+        }
+
+            .hs-product-badge-tag i {
+                color: #ffe36f;
+            }
+
+        /* ===================== PRODUCT CONTENT ===================== */
+        .hs-product-body {
+            padding: .55rem .1rem .1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .2rem;
+            flex: 1;
+        }
+
+        .hs-product-brand,
+        .hs-product-category {
+            font-size: .76rem;
+            color: black;
+        }
+
+        .hs-product-name a {
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            display: -webkit-box;
+            font-size: .9rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #1f102b;
+        }
+
+            .hs-product-name a:hover {
+                color: #7c3aed;
+            }
+
+        /* ===================== PRICE ===================== */
+        .hs-product-price-wrap {
+            margin-top: .25rem;
+            display: flex;
+            align-items: baseline;
+            gap: .45rem;
+        }
+
+        .hs-product-price-current {
+            font-size: .98rem;
+            font-weight: 700;
+            color: #f9739b;
+        }
+
+        .hs-product-price-old {
+            font-size: .78rem;
+            text-decoration: line-through;
+            color: #eabfd5;
+        }
+
+        .hs-product-price-badge {
+            font-size: .74rem;
+            border-radius: 999px;
+            padding: .15rem .45rem;
+            background: rgba(24, 12, 40, 0.9);
+            color: #ffe6f4;
+        }
+
+        /* ===================== RATING ===================== */
+        .hs-product-rating {
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+            font-size: .78rem;
+            color: black
+        }
+
+            .hs-product-rating i {
+                color: #ffd85f;
+            }
+
+        /* ===================== ACTION BUTTONS ===================== */
+        .hs-product-actions {
+            margin-top: .55rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .35rem;
+        }
+
+        .hs-product-btn-add {
+            flex: 1;
+            border-radius: 999px;
+            border: none;
+            background: #ffffff;
+            font-size: .85rem;
+            font-weight: 600;
+            padding: .35rem .8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .35rem;
+            color: #e11d72;
+            text-decoration: none;
+        }
+
+        .hs-product-btn-wish {
+            width: 2.3rem;
+            height: 2.3rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(24, 12, 40, 0.9);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff8fb8;
+            cursor: pointer;
+        }
+
+
+
+        /* GENERIC PRODUCT SECTIONS (BEST / NEW / HAIR / MAKEUP) */
+        .hs-product-section-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .hs-product-section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--hs-dark);
+            letter-spacing: -0.03em;
+        }
+
+        .hs-product-section-sub {
+            font-size: .9rem;
+            color: var(--hs-muted);
+        }
+
+        .hs-product-section-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+        }
+
+        .hs-product-tab-pill {
+            border-radius: 999px;
+            padding: .2rem .75rem;
+            font-size: .78rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: #4b5563;
+            background: #fff;
+        }
+
+            .hs-product-tab-pill.active {
+                background: #0f172a;
+                color: #f9fafb;
+                border-color: #0f172a;
+            }
+
+        .hs-product-card-light {
+            border-radius: 1.3rem;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: .75rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+        }
+
+            .hs-product-card-light .hs-product-media {
+                background: #f9fafb;
+            }
+
+            .hs-product-card-light .hs-product-name a {
+                color: #0f172a;
+            }
+
+                .hs-product-card-light .hs-product-name a:hover {
+                    color: #1d4ed8;
+                }
+
+            .hs-product-card-light .hs-product-price-current {
+                color: #1d4ed8;
+            }
+
+        /* HOT BRANDS */
+        .hs-brand-strip {
+            border-radius: 1.8rem;
+            background: linear-gradient(90deg, #0f172a, #1f2937);
+            color: #e5e7eb;
+            padding: .85rem .95rem;
+            margin-bottom: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+        }
+
+        .hs-brand-strip-left {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .hs-brand-strip-icon {
+            width: 2.1rem;
+            height: 2.1rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .hs-brand-strip-icon i {
+                color: #fbbf24;
+            }
+
+        .hs-brand-strip-text strong {
+            font-size: .92rem;
+        }
+
+        .hs-brand-strip-text span {
+            display: block;
+            font-size: .78rem;
+            color: #9ca3af;
+        }
+
+        .hs-brand-strip-btn {
+            border-radius: 999px;
+            border: 1px solid rgba(249, 250, 251, 0.3);
+            padding: .3rem .9rem;
+            font-size: .78rem;
+            color: #f9fafb;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            text-decoration: none;
+        }
+
+        /* Brand logo grid */
+        .hs-brand-logo-card {
+            border-radius: 1rem;
+            padding: .65rem .75rem;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .5rem;
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        }
+
+            .hs-brand-logo-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
+                border-color: #c4b5fd;
+            }
+
+        .hs-brand-logo-mark {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 999px;
+            background: radial-gradient(circle at 0 0, #fee2e2, #e0f2fe);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .hs-brand-logo-text {
+            flex: 1;
+        }
+
+            .hs-brand-logo-text strong {
+                font-size: .92rem;
+                color: #111827;
+            }
+
+            .hs-brand-logo-text span {
+                display: block;
+                font-size: .78rem;
+                color: #6b7280;
+            }
+
+        .hs-brand-logo-pill {
+            font-size: .75rem;
+            border-radius: 999px;
+            padding: .15rem .6rem;
+            background: #eff6ff;
+            color: #1d4ed8;
+            white-space: nowrap;
+        }
+
+        /* TRENDING SEARCH / KEYWORDS */
+        .hs-trending {
+            border-radius: 1.8rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            padding: 1.25rem 1.3rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        /* Header */
+        .hs-trending-header {
+            margin-bottom: 1rem;
+        }
+
+        .hs-trending-title {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+            .hs-trending-title i {
+                color: #fb923c;
+                font-size: 1rem;
+            }
+
+        .hs-trending-sub {
+            margin-top: .2rem;
+            font-size: .82rem;
+            color: #6b7280;
+        }
+
+        /* Tags area */
+        .hs-trending-tags {
+            margin-top: .4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem .6rem;
+        }
+
+        /* ⛔ Không click được */
+        .hs-trending-tag {
+            pointer-events: none;
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .32rem .85rem;
+            border-radius: 999px;
+            font-size: .82rem;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+            /* Icon */
+            .hs-trending-tag i {
+                font-size: .8rem;
+                color: #9ca3af;
+            }
+
+            /* HOT TAG (Premium look) */
+            .hs-trending-tag.hot {
+                background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+                border-color: #fdba74;
+                color: #9a3412;
+            }
+
+                .hs-trending-tag.hot i {
+                    color: #fb923c;
+                }
+
+        /* BLOG / MAGAZINE */
+        .hs-mag-card {
+            border-radius: 1.6rem;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        .hs-mag-media {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hs-mag-media img {
+                width: 100%;
+                display: block;
+                object-fit: cover;
+                max-height: 220px;
+                transition: transform .35s ease;
+            }
+
+        .hs-mag-card:hover .hs-mag-media img {
+            transform: scale(1.05);
+        }
+
+        .hs-mag-pill {
+            position: absolute;
+            left: .9rem;
+            top: .8rem;
+            border-radius: 999px;
+            padding: .18rem .65rem;
+            background: rgba(15, 23, 42, 0.85);
+            font-size: .75rem;
+            color: #e5e7eb;
+        }
+
+        .hs-mag-body {
+            padding: .9rem .95rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+        }
+
+        .hs-mag-meta {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .78rem;
+            color: #9ca3af;
+        }
+
+            .hs-mag-meta span.dot::before {
+                content: "•";
+                margin-right: .35rem;
+            }
+
+        .hs-mag-title a {
+            font-weight: 600;
+            font-size: .98rem;
+            color: #111827;
+            text-decoration: none;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+            .hs-mag-title a:hover {
+                color: #1d4ed8;
+            }
+
+        .hs-mag-excerpt {
+            font-size: .86rem;
+            color: #6b7280;
+        }
+
+        .hs-mag-footer {
+            margin-top: .45rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: .8rem;
+        }
+
+            .hs-mag-footer a {
+                color: #1d4ed8;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: .25rem;
+            }
+
+        /* VOUCHER / PROMO BANNER */
+        .hs-promo-grid {
+            /*display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 1rem;*/
+        }
+
+        @@media (max-width: 767.98px) {
+            .hs-promo-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+
+        .hs-promo-card {
+            border-radius: 1.6rem;
+            padding: 1rem;
+            color: #f9fafb;
+            position: relative;
+            overflow: hidden;
+            min-height: 165px;
+        }
+
+            .hs-promo-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.35) 0, transparent 60%);
+                opacity: .85;
+            }
+
+        .hs-promo-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hs-promo-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .hs-promo-sub {
+            font-size: .9rem;
+        }
+
+        .hs-promo-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+            border-radius: 999px;
+            padding: .2rem .65rem;
+            border: 1px dashed rgba(249, 250, 251, 0.6);
+            font-size: .78rem;
+            margin-bottom: .3rem;
+        }
+
+        .hs-promo-code {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            margin-top: .6rem;
+            font-size: .86rem;
+        }
+
+            .hs-promo-code span.code {
+                border-radius: .7rem;
+                padding: .2rem .55rem;
+                background: rgba(15, 23, 42, 0.93);
+                letter-spacing: .18em;
+                text-transform: uppercase;
+                font-weight: 700;
+            }
+
+        .hs-promo-badge {
+            position: absolute;
+            right: 1rem;
+            bottom: .9rem;
+            border-radius: 999px;
+            padding: .2rem .55rem;
+            background: rgba(15, 23, 42, 0.18);
+            font-size: .78rem;
+        }
+
+        .hs-promo-cta {
+            margin-top: .65rem;
+            font-size: .78rem;
+        }
+
+        /* MEMBERSHIP / LOYALTY */
+        .hs-membership {
+
+            border-radius: 2rem;
+            background: radial-gradient(circle at 0 0, #312e81, #0f172a);
+            color: #e5e7eb;
+            padding: 1.6rem 1.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @@media (min-width: 992px) {
+            .hs-membership {
+                padding: 2rem 1.8rem;
+            }
+        }
+
+        .hs-membership::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 100% 0, rgba(244, 114, 182, 0.6) 0, transparent 55%), radial-gradient(circle at 0% 100%, rgba(96, 165, 250, 0.55) 0, transparent 55%);
+            opacity: .7;
+        }
+
+        .hs-membership-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hs-membership-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border-radius: 999px;
+            padding: .2rem .65rem;
+            border: 1px solid rgba(249, 250, 251, 0.45);
+            font-size: .78rem;
+            margin-bottom: .45rem;
+        }
+
+        .hs-membership-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .hs-membership-sub {
+            font-size: .9rem;
+            color: #e5e7eb;
+        }
+
+        .hs-membership-perks {
+            margin-top: .85rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .75rem 1.2rem;
+        }
+
+        .hs-membership-perk {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .86rem;
+        }
+
+            .hs-membership-perk i {
+                color: #facc15;
+            }
+
+        .hs-membership-card {
+            margin-top: 1rem;
+            border-radius: 1.5rem;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 64, 175, 0.92));
+            padding: .8rem .9rem;
+            max-width: 270px;
+        }
+
+        .hs-membership-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: .3rem;
+            font-size: .78rem;
+        }
+
+        .hs-membership-card-no {
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            font-size: .75rem;
+        }
+
+        .hs-membership-card-name {
+            margin-top: .35rem;
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .hs-membership-card-tier {
+            font-size: .75rem;
+            color: #e5e7eb;
+        }
+
+        /* NEWSLETTER / SUBSCRIBE */
+        /* ===================== NEWSLETTER WRAPPER (CHỮ TỐI) ===================== */
+        .hs-newsletter {
+            border-radius: 1.8rem;
+            background: linear-gradient(135deg, #fdfdfd, #e5e7eb); /* nền sáng hơn để chữ tối cực rõ */
+            color: #1e293b; /* text tối */
+            padding: 1.6rem 1.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hs-newsletter::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0% 100%, rgba(251, 113, 133, 0.25) 0, transparent 65%);
+                opacity: .6;
+            }
+
+        /* ===================== INNER ===================== */
+        .hs-newsletter-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===================== TITLE ===================== */
+        /* Chữ tối + đậm để nổi thật mạnh */
+        .hs-newsletter-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #1f2937; /* xám than đậm */
+        }
+
+        /* ===================== SUB TEXT ===================== */
+        .hs-newsletter-sub {
+            font-size: .92rem;
+            color: #374151; /* xám đậm rõ ràng */
+            opacity: 1;
+        }
+
+        /* ===================== FORM ===================== */
+        .hs-newsletter-form {
+            margin-top: .85rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+            .hs-newsletter-form .form-control {
+                border-radius: 999px;
+                border: 1px solid #cbd5e1;
+                background: #ffffff;
+                font-size: .9rem;
+                color: #111827; /* chữ đen */
+                padding: .45rem 1rem;
+            }
+
+                .hs-newsletter-form .form-control::placeholder {
+                    color: #6b7280; /* xám tối nhẹ */
+                }
+
+        /* ===================== BUTTON ===================== */
+        .hs-newsletter-btn {
+            border-radius: 999px;
+            border: none;
+            background: #f97316; /* cam đậm */
+            color: #1f1f1f; /* chữ tối */
+            font-size: .9rem;
+            font-weight: 700;
+            padding: .45rem 1.3rem;
+            box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+            transition: 0.2s ease;
+        }
+
+            .hs-newsletter-btn:hover {
+                background: #ea580c;
+                box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45);
+            }
+
+        /* ===================== NOTE ===================== */
+        .hs-newsletter-note {
+            margin-top: .45rem;
+            font-size: .78rem;
+            color: #475569; /* xám tối */
+        }
+
+
+        /* ===================== STORE / OFFLINE CTA ===================== */
+
+.hs-store-card {
+    position: relative;
+    border-radius: 1.6rem;
+    padding: 1.1rem 1.15rem 1.25rem;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(252, 231, 243, 0.9) 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(219, 234, 254, 0.9) 0, transparent 55%),
+        #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow: hidden;
+}
+
+/* dải highlight nhỏ bên trên cho sang */
+.hs-store-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(244, 114, 182, 0.28), rgba(56, 189, 248, 0.22));
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.hs-store-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.hs-store-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #111827;
+    display: flex;
+    align-items: center;
+}
+
+.hs-store-title i {
+    font-size: 1.1rem;
+}
+
+/* mô tả chính – chữ tối, dễ đọc */
+.hs-store-meta {
+    font-size: 0.86rem;
+    color: #4b5563;
+}
+
+/* stats “fake hệ thống cửa hàng” */
+.hs-store-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.hs-store-stat strong {
+    font-weight: 800;
+    color: #111827;
+}
+
+.hs-store-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: #9ca3af;
+}
+
+/* chips thành phố */
+.hs-store-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.hs-store-chip {
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.78rem;
+    background: rgba(243, 244, 246, 0.9);
+    color: #374151;
+    border: 1px solid rgba(209, 213, 219, 0.9);
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+
+/* responsive nhẹ */
+@@media (max-width: 576px) {
+    .hs-store-card {
+        padding: 1rem 1rem 1.1rem;
+    }
+
+    .hs-store-meta {
+        font-size: 0.84rem;
+    }
+}
+
+
+        /* SMALL UTILITIES */
+        .text-gradient-primary {
+            background: linear-gradient(120deg, #1c4b82, #0f172a);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .text-gradient-accent {
+            background: linear-gradient(120deg, #fb7185, #f97316);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .border-dashed {
+            border-style: dashed !important;
+        }
+
+        .opacity-80 {
+            opacity: .8;
+        }
+
+        .opacity-60 {
+            opacity: .6;
+        }
+
+        .fs-13 {
+            font-size: .82rem;
+        }
+
+        .fs-14 {
+            font-size: .88rem;
+        }
+
+        .rounded-3xl {
+            border-radius: 1.8rem;
+        }
+
+        .rounded-4xl {
+            border-radius: 2.4rem;
+        }
+        /* ================= BEST SELLER – 3 STYLE KHÁC NHAU ================= */
+
+        /* ANIMATION CHUNG */
+        @@keyframes hsFloatIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* --- 1. SKINCARE: SLIDER NGANG, CARD HỒNG PASTEL --- */
+
+        .hs-skin-row {
+            display: flex;
+            gap: .7rem;
+            overflow-x: auto;
+            padding-bottom: .3rem;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+        }
+
+            .hs-skin-row::-webkit-scrollbar {
+                height: 5px;
+            }
+
+            .hs-skin-row::-webkit-scrollbar-thumb {
+                background: rgba(236, 72, 153, .45);
+                border-radius: 999px;
+            }
+
+        /* CARD */
+        .hs-skin-card {
+            scroll-snap-align: start;
+            min-width: 240px;
+            max-width: 260px;
+            border-radius: 1.6rem;
+            background: radial-gradient(circle at 0 0, #ffe4ec, #fce7f3);
+            border: 1px solid rgba(236, 72, 153, .25);
+            padding: .6rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 16px 45px rgba(236, 72, 153, .15);
+            animation: hsFloatIn .6s ease both;
+        }
+
+        .hs-skin-media {
+            border-radius: 1.3rem;
+            overflow: hidden;
+            background: #fff5f7;
+            padding: .4rem;
+        }
+
+            .hs-skin-media img {
+                width: 100%;
+                object-fit: contain;
+                transition: transform .35s ease;
+            }
+
+        .hs-skin-card:hover .hs-skin-media img {
+            transform: translateY(-4px) scale(1.06);
+        }
+
+        /* Pill tag */
+
+
+        .hs-skin-pill {
+            border-radius: 999px;
+            padding: .15rem .55rem;
+            font-size: .75rem;
+            background: rgba(244, 114, 182, .15);
+            color: #be185d;
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+        }
+
+            .hs-skin-pill i {
+                font-size: .78rem;
+            }
+        /* --- 2. MAKEUP: STYLE HỒNG LUXURY --- */
+
+        .hs-makeup-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: .75rem;
+        }
+
+        @@media (min-width: 768px) {
+            .hs-makeup-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .hs-makeup-card {
+            border-radius: 1.2rem;
+            background: #ffffff;
+            border: 1px solid #fbcfe8;
+            padding: .6rem .65rem .7rem;
+            box-shadow: 0 18px 40px rgba(236, 72, 153, .22);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: hsFloatIn .6s ease both;
+        }
+
+            .hs-makeup-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0 0, rgba(255, 228, 230, .9), transparent 60%);
+                opacity: .95;
+                pointer-events: none;
+            }
+
+        /* Bọc avatar */
+        .hs-makeup-avatar-wrap {
+            width: 92px;
+            height: 92px;
+            border-radius: 999px;
+            padding: .2rem;
+            background: linear-gradient(135deg, #f472b6, #fb7185);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto .35rem;
+            text-align: center;
+
+        }
+
+        .hs-makeup-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #fff1f2;
+        }
+
+            .hs-makeup-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                transition: transform .35s ease;
+            }
+
+        .hs-makeup-card:hover .hs-makeup-avatar img {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        /* Badge */
+        .hs-makeup-badge {
+            position: absolute;
+            top: .5rem;
+            right: .55rem;
+            border-radius: 999px;
+            padding: .12rem .5rem;
+            background: #be185d;
+            color: #ffe4e6;
+            font-size: .72rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .22rem;
+        }
+
+        /* Name */
+        .hs-makeup-name {
+            font-size: .9rem;
+            font-weight: 600;
+            color: #9d174d;
+            max-height: 2.8em;
+            overflow: hidden;
+        }
+
+        /* Price */
+        .hs-makeup-price {
+            margin-top: .15rem;
+            font-size: .95rem;
+            font-weight: 700;
+            color: #be185d;
+        }
+
+        .hs-makeup-old {
+            font-size: .78rem;
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        /* ==== POSTER BRAND CARD ==== */
+        .hs-brand-poster-card {
+            display: block;
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            text-decoration: none;
+            color: #fff;
+            height: 240px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.20);
+            transition: transform .35s ease, box-shadow .35s ease;
+        }
+
+            .hs-brand-poster-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 45px rgba(0,0,0,0.28);
+            }
+
+        /* Background ảnh */
+        .hs-brand-poster-img {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.78);
+            transition: filter .35s ease, transform .35s ease;
+        }
+
+        .hs-brand-poster-card:hover .hs-brand-poster-img {
+            filter: brightness(0.95);
+            transform: scale(1.08);
+        }
+
+        /* Overlay gradient */
+        .hs-brand-poster-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.55));
+            z-index: 1;
+        }
+
+        /* Text */
+        .hs-brand-poster-content {
+            position: absolute;
+            z-index: 2;
+            bottom: 1.2rem;
+            left: 1.2rem;
+            right: 1.2rem;
+        }
+
+            .hs-brand-poster-content .title {
+                font-size: 1.35rem;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.35rem;
+            }
+
+            .hs-brand-poster-content .desc {
+                font-size: 0.92rem;
+                opacity: 0.9;
+                line-height: 1.35;
+            }
+        .brand-card {
+            position: relative;
+            display: block;
+            height: 260px;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Ảnh bắt buộc fill toàn card */
+        .brand-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform .3s ease;
+        }
+
+        .brand-card:hover .brand-img {
+            transform: scale(1.08);
+        }
+
+        /* Gradient nhẹ dưới */
+        .brand-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.55));
+            z-index: 1;
+        }
+
+        /* Text nổi lên trên */
+        .brand-text {
+            position: absolute;
+            z-index: 2;
+            bottom: 1.3rem;
+            left: 1.3rem;
+            right: 1.3rem;
+        }
+
+            .brand-text h3 {
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+
+            .brand-text p {
+                margin: 0;
+                opacity: .95;
+            }
+        /* ===================== FLASH SALE CONTENT ===================== */
+
+        /* ===================== FLASH SALE TEXT – HIGH CONTRAST ===================== */
+
+        /* Label FLASH SALE – cam neon nổi rõ */
+        .hs-flash-label {
+            color: #ffb347; /* cam đậm */
+        }
+
+            .hs-flash-label i {
+                color: #ff8f00; /* cam neon */
+            }
+
+        /* Tiêu đề – gradient tím → hồng đậm → đỏ neon */
+        .hs-flash-title {
+            background: linear-gradient(90deg, #b833ff, #ff2f85, #ff1e43);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Sub text – tím pastel đậm */
+        .hs-flash-sub {
+            color: #f3c8ff; /* tím nhạt nhưng đậm hơn vàng */
+        }
+
+        /* COUNTDOWN text */
+        .hs-flash-countdown > span:first-child {
+            color: #ffe1f4; /* hồng kem */
+        }
+
+        /* Countdown số – chữ trắng đậm để nổi */
+        .hs-flash-countdown .badge {
+            color: #ffffff !important;
+            font-weight: 800;
+        }
+
+        /* Link “Xem tất cả khuyến mãi” – hồng neon đậm */
+        .hs-flash-link-all {
+            color: #ff3f73 !important;
+            font-weight: 700;
+        }
+
+            .hs-flash-link-all:hover {
+                color: #ff6fa1 !important;
+            }
+
+        /* Text mô tả phải – tím hồng rõ hơn */
+        .fs-13.opacity-80 {
+            color: #f8cfff !important;
+        }
+
+        /* Icon arrow – hồng neon */
+        .hs-flash-link-all i {
+            color: #ff3f73 !important;
+        }
+        /* ===================== FLASH SALE COUNTDOWN RED ===================== */
+
+        /* Chữ "Sale kết thúc sau" */
+        .hs-flash-countdown > span:first-child {
+            color: #b30024; /* đỏ đậm, rõ, luxury */
+            font-weight: 600;
+        }
+
+        /* Các khối số đếm (02 : 59 : 44) */
+        .hs-flash-countdown .badge {
+            background: #ff0033 !important; /* đỏ neon đậm */
+            color: #ffffff !important; /* chữ trắng cho tương phản mạnh */
+            box-shadow: 0 0 12px rgba(255, 0, 51, 0.6);
+            font-weight: 800;
+            border: none;
+        }
+
+        /* Dấu ":" giữa số — cho đỏ đậm luôn */
+        .hs-flash-countdown span:not(.badge):not(:first-child) {
+            color: #ff002a;
+            font-weight: 900;
+        }
+
+
+    </style>
+}
+
+<div class="container my-3 my-lg-4">
+
+    <!-- ================= HERO ================= -->
+    <section class="hs-section pt-3 pb-3 pb-lg-4">
+        <div class="row g-3 g-lg-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="hs-hero">
+                    <div class="hs-hero-inner">
+                        <div class="hs-top-strip mb-3">
+                            <span class="hs-dot"></span>
+                            <span class="hs-top-strip-badge">BLACK WEEK</span>
+                            <span>Freeship 15K • Quà tặng mọi đơn từ <strong>499K</strong></span>
+                        </div>
+
+                        <h1 class="hs-hero-title">
+                            Nâng tầm <span class="highlight">chuẩn chăm sóc da</span>,
+                            toả sáng phong cách <span class="highlight">The Face Shop</span>.
+                        </h1>
+
+                        <p class="hs-hero-subtitle">
+                            Khám phá thế giới mỹ phẩm chính hãng, từ skincare, makeup đến chăm sóc body &amp; tóc.
+                            Chọn ngay routine “chân ái” chuẩn Hàn Quốc, được tuyển chọn bởi Beauty Advisor của bạn.
+                        </p>
+
+                        <div class="hs-hero-badges">
+                            <span class="hs-hero-badge">
+                                <i class="fa-solid fa-shield-heart"></i>
+                                100% hàng chính hãng
+                            </span>
+                            <span class="hs-hero-badge">
+                                <i class="fa-solid fa-truck-fast"></i>
+                                Giao nhanh toàn quốc
+                            </span>
+                            <span class="hs-hero-badge">
+                                <i class="fa-solid fa-gift"></i>
+                                Quà tặng theo từng hoá đơn
+                            </span>
+                        </div>
+
+                        <div class="hs-hero-cta">
+                            <a href="@Url.Action("ShowSP", "SanPham")" class="hs-btn-primary">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                Mua sắm ngay
+                            </a>
+
+                            <a href="@Url.Action("About", "Home")#trend" class="hs-btn-outline">
+                                <i class="fa-solid fa-sparkles"></i>
+                                Xem xu hướng làm đẹp
+                            </a>
+                        </div>
+
+                        <div class="hs-hero-meta">
+                            <div class="hs-hero-meta-item">
+                                <div class="hs-hero-meta-avatar-group">
+                                    <div class="hs-hero-meta-avatar"
+                                         style="background-image:url('https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg?auto=compress&cs=tinysrgb&w=300');"></div>
+                                    <div class="hs-hero-meta-avatar"
+                                         style="background-image:url('https://images.pexels.com/photos/3738344/pexels-photo-3738344.jpeg?auto=compress&cs=tinysrgb&w=300');"></div>
+                                    <div class="hs-hero-meta-avatar"
+                                         style="background-image:url('https://images.pexels.com/photos/3738090/pexels-photo-3738090.jpeg?auto=compress&cs=tinysrgb&w=300');"></div>
+                                    <div class="hs-hero-meta-avatar"
+                                         style="background-image:url('https://images.pexels.com/photos/3738095/pexels-photo-3738095.jpeg?auto=compress&cs=tinysrgb&w=300');"></div>
+                                    <span class="hs-hero-meta-count">+5K</span>
+                                </div>
+                                <span>khách hàng đã tin tưởng The Face Shop.</span>
+                            </div>
+
+                            <div class="hs-hero-meta-item">
+                                <i class="fa-solid fa-medal"></i>
+                                <span>Ưu đãi thành viên <strong>My Beauty Club</strong> lên đến 15%.</span>
+                            </div>
+                        </div>
+
+                        <div class="hs-quick-cats">
+                            <div class="hs-quick-cats-title">KHÁM PHÁ NHANH</div>
+                            <div class="hs-quick-cats-list">
+                                <a class="hs-quick-cat-pill" href="@Url.Action("ShowSP", "SanPham", new { categories = "DM001" })">
+                                    <i class="fa-solid fa-droplet"></i> Chăm sóc da mặt
+                                </a>
+                                <a class="hs-quick-cat-pill" href="@Url.Action("ShowSP", "SanPham", new { categories = "DM002" })">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Trang điểm
+                                    <span class="hot">HOT</span>
+                                </a>
+                                <a class="hs-quick-cat-pill" href="@Url.Action("ShowSP", "SanPham", new { categories = "DM003" })">
+                                    <i class="fa-solid fa-spray-can-sparkles"></i> Chăm sóc tóc
+                                </a>
+                                <a class="hs-quick-cat-pill" href="@Url.Action("ShowSP", "SanPham")">
+                                    <i class="fa-solid fa-border-all"></i> Tất cả sản phẩm
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="hs-scroll-nav mt-3">
+                            <a href="#flash-sale" class="hs-scroll-nav-pill active">
+                                <i class="fa-solid fa-bolt-lightning"></i> Flash Sale
+                            </a>
+                            <a href="#best-seller" class="hs-scroll-nav-pill">
+                                <i class="fa-solid fa-ranking-star"></i> Bán chạy
+                            </a>
+                            <a href="#new-arrivals" class="hs-scroll-nav-pill">
+                                <i class="fa-solid fa-seedling"></i> Hàng mới
+                            </a>
+                            <a href="#brands" class="hs-scroll-nav-pill">
+                                <i class="fa-solid fa-crown"></i> Thương hiệu
+                            </a>
+                            <a href="#magazine" class="hs-scroll-nav-pill">
+                                <i class="fa-solid fa-book-open"></i> Tạp chí làm đẹp
+                            </a>
+                            <a href="#membership" class="hs-scroll-nav-pill">
+                                <i class="fa-solid fa-gem"></i> Thành viên
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HERO RIGHT: POSTER / BANNER -->
+            <div class="col-lg-6">
+                <div class="hs-hero-media-card">
+                    <div class="hs-hero-media-main">
+                        <img class="hs-hero-main-img"
+                             src="https://images.pexels.com/photos/3738341/pexels-photo-3738341.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                             alt="Bộ sưu tập skincare & makeup The Face Shop" />
+
+                        <div class="hs-hero-media-pill">
+                            <i class="fa-solid fa-bolt"></i>
+                            BLACK WEEK SALE • GIẢM ĐẾN 40%
+                        </div>
+
+                        <div class="hs-hero-media-label">
+                            <i class="fa-solid fa-gift"></i>
+                            <span>Quà tặng mọi đơn từ 499K</span>
+                        </div>
+                    </div>
+
+                    <div class="hs-hero-float-card d-none d-md-block">
+                        <div class="hs-hero-float-title">
+                            <i class="fa-solid fa-fire-flame-curved"></i>
+                            <span>Routine da khoẻ chuẩn Hàn</span>
+                        </div>
+                        <span class="hs-hero-float-badge">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Được tư vấn bởi Beauty Advisor
+                        </span>
+                        <div class="hs-hero-float-meta">
+                            <span><strong>+120</strong> combo skincare</span>
+                            <span class="opacity-80">Bắt đầu từ 199K</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <div class="hs-store-card">
+                                <div class="hs-store-title">
+                                    <i class="fa-solid fa-store me-2 text-gradient-primary"></i>
+                                    Hệ thống cửa hàng
+                                </div>
+
+                                <div class="hs-store-meta">
+                                    Mua online – nhận tại cửa hàng gần bạn nhất, trải nghiệm tư vấn da trực tiếp cùng Beauty Advisor.
+                                </div>
+
+                                <div class="hs-store-stats">
+                                    <span class="hs-store-stat"><strong>25+</strong> cửa hàng toàn quốc</span>
+                                    <span class="hs-store-dot"></span>
+                                    <span class="hs-store-stat">3 thành phố lớn</span>
+                                </div>
+
+                                <div class="hs-store-chips">
+                                    <span class="hs-store-chip">TP. Hồ Chí Minh</span>
+                                    <span class="hs-store-chip">Hà Nội</span>
+                                    <span class="hs-store-chip">Đà Nẵng</span>
+                                    <span class="hs-store-chip">Bình Dương</span>
+                                    <span class="hs-store-chip">Tây Ninh</span>
+                                    <span class="hs-store-chip">Vĩnh Long</span>
+                                    <span class="hs-store-chip">Đồng Nai</span>
+                                    <span class="hs-store-chip">Lâm Đồng</span>
+                                    <span class="hs-store-chip">Nghệ An</span>
+                                    <span class="hs-store-chip">Quảng Ngãi</span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hs-newsletter">
+                                <div class="hs-newsletter-inner">
+                                    <div class="hs-newsletter-title">
+                                        Nhận bản tin làm đẹp
+                                    </div>
+                                    <div class="hs-newsletter-sub">
+                                        Không bỏ lỡ ưu đãi độc quyền từ The Face Shop.
+                                    </div>
+
+                                    @using (Html.BeginForm("Subscribe", "Newsletter", FormMethod.Post, new { @class = "hs-newsletter-form mt-2" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="email"
+                                               name="email"
+                                               class="form-control form-control-sm"
+                                               placeholder="Nhập email của bạn"
+                                               required />
+
+                                        <button type="submit" class="hs-newsletter-btn">
+                                            <i class="fa-solid fa-paper-plane"></i>
+                                            Theo dõi
+                                        </button>
+                                    }
+
+                                    <div class="hs-newsletter-note">
+                                        Bằng cách theo dõi, bạn đồng ý với Chính sách bảo mật của chúng tôi.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FLASH SALE ================= -->
+    <section id="flash-sale" class="hs-section pt-2">
+        <div class="hs-flash-wrapper">
+            <div class="hs-flash-inner">
+                <div class="hs-flash-heading">
+                    <div>
+                        <div class="hs-flash-label">
+                            <i class="fa-solid fa-bolt"></i>
+                            FLASH SALE GIỜ VÀNG
+                        </div>
+                        <div class="hs-flash-title">
+                            Săn deal đậm – chốt đơn liền tay.
+                        </div>
+                        <div class="hs-flash-countdown mt-1">
+                            <span>Sale kết thúc sau</span>
+                            <span class="badge" id="hsFlashHour">03</span>:
+                            <span class="badge" id="hsFlashMinute">12</span>:
+                            <span class="badge" id="hsFlashSecond">45</span>
+                        </div>
+                    </div>
+                 
+                </div>
+
+                <div class="row g-2 g-sm-3 g-md-3 g-lg-4">
+                    @if (Model.FlashSale != null && Model.FlashSale.Any())
+                    {
+                        foreach (var sp in Model.FlashSale.Take(8))
+
+                        {
+                            var url = Url.Action("Details", "SanPham", new { id = sp.MASP });
+
+                            string spImg = Url.Content("~/images/" + (string.IsNullOrWhiteSpace(sp.HINHANH)
+                                ? "no-image.png"
+                                : sp.HINHANH));
+
+                            string brandName = sp.THUONGHIEU != null ? sp.THUONGHIEU.TENTH : "Thương hiệu khác";
+                            string catName = sp.DANHMUC != null ? sp.DANHMUC.TENDANHMUC : sp.MADM;
+
+                            decimal giaBan = sp.GIABAN;        // vì GIABAN là decimal, không nullable
+                            decimal km = sp.KHUYENMAI;     // nếu KHUYENMAI cũng là decimal, không nullable
+                            decimal giaGoc = km > 0
+                                ? Math.Round(giaBan / (1 - km / 100m), 0)
+                                : giaBan;
+
+                            string kmText = km > 0 ? $"-{km:0}% OFF" : "Ưu đãi";
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                                <article class="hs-product-card">
+                                    <div class="hs-product-media">
+                                        <a href="@url">
+                                            <img src="@spImg" alt="@sp.TENSP" />
+                                        </a>
+
+                                        @if (km > 0)
+                                        {
+                                            <div class="hs-product-badge-sale">
+                                                <i class="fa-solid fa-fire-flame-curved"></i>
+                                                @kmText
+                                            </div>
+                                        }
+
+                                        <div class="hs-product-badge-tag">
+                                            <i class="fa-solid fa-bolt-lightning"></i>
+                                            Flash deal
+                                        </div>
+                                    </div>
+
+                                    <div class="hs-product-body">
+                                        <div class="hs-product-brand">
+                                            @brandName
+                                        </div>
+                                        <div class="hs-product-name">
+                                            <a href="@url" title="@sp.TENSP">@sp.TENSP</a>
+                                        </div>
+                                        <div class="hs-product-category">
+                                            @catName
+                                        </div>
+
+                                        <div class="hs-product-price-wrap">
+                                            <div class="hs-product-price-current">
+                                                @money(giaBan)
+                                            </div>
+
+                                            @if (km > 0 && giaGoc > giaBan)
+                                            {
+                                                <div class="hs-product-price-old">
+                                                    @money(giaGoc)
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div class="hs-product-rating">
+                                            <span>
+                                                <i class="fa-solid fa-star"></i>
+                                                4.9/5
+                                            </span>
+                                            <span class="opacity-60">•</span>
+                                            <span>+150 đánh giá</span>
+                                        </div>
+
+                                        <div class="hs-product-actions">
+                                            <a href="@url" class="hs-product-btn-add">
+                                                <i class="fa-solid fa-eye"></i>
+                                                Xem chi tiết
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <div class="text-center text-light fs-14 opacity-80 py-3">
+                                Hiện chưa có sản phẩm Flash Sale. Vui lòng quay lại sau nhé!
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- ================= TIỆN ÍCH LÀM ĐẸP NGANG ================= -->
+<section class="hs-section pt-2 pb-2">
+    <div class="row g-2 g-lg-3 align-items-stretch">
+
+        <!-- 1. Xu hướng tìm kiếm tuần này -->
+        <div class="col-12 col-lg-4">
+            <div class="hs-trending h-100">
+                <div class="hs-trending-header">
+                    <div class="hs-trending-title">
+                        <i class="fa-solid fa-sparkles"></i>
+                        Xu hướng tìm kiếm tuần này
+                    </div>
+                    <div class="hs-trending-sub d-none d-sm-block">
+                        Cập nhật nhu cầu làm đẹp nổi bật của khách hàng.
+                    </div>
+                </div>
+
+                <div class="hs-trending-tags">
+                    <button class="hs-trending-tag hot" type="button">
+                        <i class="fa-solid fa-fire-flame-curved"></i>
+                        Kem chống nắng nâng tone
+                    </button>
+                    <button class="hs-trending-tag" type="button">
+                        <i class="fa-regular fa-face-smile"></i>
+                        Sữa rửa mặt dịu nhẹ
+                    </button>
+                    <button class="hs-trending-tag" type="button">
+                        <i class="fa-solid fa-droplet"></i>
+                        Serum cấp ẩm HA
+                    </button>
+                    <button class="hs-trending-tag" type="button">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        Cushion che khuyết điểm
+                    </button>
+                    <button class="hs-trending-tag" type="button">
+                        <i class="fa-solid fa-spray-can-sparkles"></i>
+                        Dầu gội giảm gãy rụng
+                    </button>
+                    <button class="hs-trending-tag" type="button">
+                        <i class="fa-solid fa-hands-bubbles"></i>
+                        Sữa tắm dưỡng ẩm
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Voucher hôm nay + Member -->
+        <div class="col-12 col-lg-4">
+            <div class="row g-2 h-100">
+
+                <!-- Voucher hôm nay -->
+                <div class="col-12">
+                    <div class="hs-promo-card" style="background: linear-gradient(135deg,#f97316,#b91c1c);">
+                        <div class="hs-promo-inner">
+                            <div class="hs-promo-tag">
+                                <i class="fa-solid fa-ticket-simple"></i>
+                                Voucher hôm nay
+                            </div>
+                            <h3 class="hs-promo-title">Giảm 50K cho đơn từ 499K</h3>
+                            <p class="hs-promo-sub mb-1">
+                                Áp dụng cho toàn bộ sản phẩm skincare &amp; makeup.
+                            </p>
+                            <div class="hs-promo-code">
+                                <span class="code">TFS50K</span>
+                                <span>Copy &amp; áp dụng tại bước thanh toán.</span>
+                            </div>
+                            <div class="hs-promo-cta">
+                                HSD: 23:59 hôm nay • Số lượng có hạn.
+                            </div>
+                            <span class="hs-promo-badge">
+                                <i class="fa-solid fa-clock me-1"></i> FLASH VOUCHER
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ưu đãi thành viên My Beauty Club -->
+                <div class="col-12">
+                    <div class="hs-promo-card" style="background: linear-gradient(135deg,#6366f1,#312e81);">
+                        <div class="hs-promo-inner">
+                            <div class="hs-promo-tag">
+                                <i class="fa-solid fa-gem"></i>
+                                Thành viên My Beauty Club
+                            </div>
+                            <h3 class="hs-promo-title">Ưu đãi thêm 10%</h3>
+                            <p class="hs-promo-sub mb-1">
+                                Cho khách hàng hạng Silver trở lên, không giới hạn số lần.
+                            </p>
+                            <div class="hs-promo-cta">
+                                Đăng nhập để xem mức ưu đãi riêng của bạn.
+                            </div>
+                            <span class="hs-promo-badge">
+                                <i class="fa-solid fa-user-check me-1"></i> MEMBER ONLY
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 3. Trải nghiệm thử sản phẩm tại store -->
+        <div class="col-12 col-lg-4">
+            <div class="hs-store-card h-100">
+                <div class="hs-store-title">
+                    <i class="fa-solid fa-map-location-dot me-2 text-gradient-primary"></i>
+                    Trải nghiệm thử sản phẩm tại store
+                </div>
+                <div class="hs-store-meta">
+                    Được đo da, tư vấn routine 1:1 cùng Beauty Advisor của The Face Shop.
+                </div>
+
+                <div class="hs-store-chips">
+                    <span class="hs-store-chip">Đo độ ẩm &amp; dầu</span>
+                    <span class="hs-store-chip">Tư vấn routine cá nhân</span>
+                    <span class="hs-store-chip">Phân tích tình trạng da</span>
+                    <span class="hs-store-chip">Test sản phẩm trực tiếp</span>
+                    <span class="hs-store-chip">Hướng dẫn skincare tại chỗ</span>
+                    <span class="hs-store-chip">Tư vấn mùi hương</span>
+                    <span class="hs-store-chip">Quà tặng mẫu thử</span>
+                    <span class="hs-store-chip">Combo ưu đãi tại cửa hàng</span>
+                    <span class="hs-store-chip">Chấm điểm nhận quà</span>
+                    <span class="hs-store-chip">Quà sinh nhật thành viên</span>
+                    <span class="hs-store-chip">Làm thẻ thành viên tại chỗ</span>
+                    <span class="hs-store-chip">Hỗ trợ đổi trả nhanh</span>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= BEST SELLER ================= -->
+<!-- ================= BEST SELLER – SẢN PHẨM BÁN CHẠY THEO NHU CẦU ================= -->
+<section id="best-seller" class="hs-section">
+    <div class="hs-product-section-header mb-2">
+        <div>
+            <div class="hs-section-title">Best seller</div>
+            <h2 class="hs-product-section-title">Sản phẩm bán chạy theo nhu cầu làm đẹp</h2>
+            <p class="hs-product-section-sub mb-0">
+                Lựa chọn những sản phẩm được khách hàng The Face Shop tin dùng, phù hợp cho mọi routine dưỡng da,
+                makeup và chăm sóc tóc hằng ngày.
+            </p>
+        </div>
+        <div class="hs-product-section-tabs">
+            <a href="@Url.Action("ShowSP","SanPham", new { categories = "DM001" })" class="hs-product-tab-pill active">
+                Chăm sóc da (DM001)
+            </a>
+            <a href="@Url.Action("ShowSP","SanPham", new { categories = "DM002" })" class="hs-product-tab-pill">
+                Trang điểm (DM002)
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. CHĂM SÓC DA – SLIDER NGANG (TỚI 8 SP) -->
+    @if (Model.BestSkincare != null && Model.BestSkincare.Any())
+    {
+        <div class="mb-3">
+            <div class="d-flex align-items-baseline justify-content-between mb-2">
+                <h3 class="fw-semibold mb-0">Chăm sóc da mặt</h3>
+                <a class="text-decoration-none fs-13 opacity-80"
+                   href="@Url.Action("ShowSP","SanPham", new { categories = "DM001" })">
+                    Xem tất cả skincare <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                </a>
+            </div>
+
+            <div class="hs-skin-row">
+                @foreach (var sp in Model.BestSkincare.Take(8))
+                {
+                    var url = Url.Action("Details", "SanPham", new { id = sp.MASP });
+                    var img = Url.Content("~/images/" + (string.IsNullOrWhiteSpace(sp.HINHANH) ? "no-image.png" : sp.HINHANH));
+                    string brandName = sp.THUONGHIEU != null ? sp.THUONGHIEU.TENTH : "THE FACE SHOP";
+
+                    decimal giaBan = sp.GIABAN;
+                    decimal km = sp.KHUYENMAI;
+                    decimal giaGoc = km > 0 ? Math.Round(giaBan / (1 - km / 100m), 0) : giaBan;
+
+                    <article class="hs-skin-card">
+                        <a href="@url" class="hs-skin-media">
+                            <img src="@img" alt="@sp.TENSP" />
+                        </a>
+                        <div class="mt-2">
+                            <div class="text-uppercase text-muted small">@brandName</div>
+                            <div class="hs-product-name mb-1">
+                                <a href="@url">@sp.TENSP</a>
+                            </div>
+                            <div class="hs-product-price-wrap">
+                                <div class="hs-product-price-current">@money(giaBan)</div>
+                                @if (km > 0)
+                                {
+                                    <div class="hs-product-price-old">@money(giaGoc)</div>
+                                    <div class="hs-product-price-badge">-@km.ToString("0")%</div>
+                                }
+                            </div>
+                            <div class="hs-product-actions">
+                                <a href="@url" class="hs-product-btn-add">
+                                    <i class="fa-solid fa-eye"></i>
+                                    Xem chi tiết
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- 2. MAKEUP – ẢNH TRÒN, GRID 4 CỘT (TỚI 8 SP) -->
+    @if (Model.BestMakeup != null && Model.BestMakeup.Any())
+    {
+        <div class="mb-3">
+            <div class="d-flex align-items-baseline justify-content-between mb-2">
+                <h3 class="fw-semibold mb-0">Trang điểm tự nhiên &amp; long lanh</h3>
+            </div>
+
+            <div class="hs-makeup-grid">
+                @foreach (var sp in Model.BestMakeup.Take(8))
+                {
+                    var url = Url.Action("Details", "SanPham", new { id = sp.MASP });
+                    var img = Url.Content("~/images/" + (string.IsNullOrWhiteSpace(sp.HINHANH) ? "no-image.png" : sp.HINHANH));
+                    string brandName = sp.THUONGHIEU != null ? sp.THUONGHIEU.TENTH : "THE FACE SHOP";
+
+                    decimal giaBan = sp.GIABAN;
+                    decimal km = sp.KHUYENMAI;
+                    decimal giaGoc = km > 0 ? Math.Round(giaBan / (1 - km / 100m), 0) : giaBan;
+
+                    <article class="hs-makeup-card">
+
+                        <a href="@url" class="hs-makeup-avatar-wrap">
+                            <div class="hs-makeup-avatar" >
+                                <img src="@img" alt="@sp.TENSP" />
+                            </div>
+                        </a>
+
+                        <div class="hs-makeup-name mt-1" style="text-align: left; ">
+                            <a href="@url" style="text-decoration: none; color: #1f102b; font-size: .9rem; font-weight: 600; ">@sp.TENSP</a>
+                        </div>
+                        <div class="hs-product-price-wrap" style="color: #f9739b; font-size: 0.98rem; font-weight: 700; ">
+                            @money(giaBan)
+                            @if (km > 0)
+                            {
+                                <div class="hs-product-price-old">@money(giaGoc)</div>
+                                <div class="hs-product-price-badge">-@km.ToString("0")%</div>
+                            }
+                        </div>
+
+
+                    </article>
+                }
+            </div>
+        </div>
+    }
+
+</section>
+
+
+<!-- ================= NEW ARRIVALS ================= -->
+<section id="new-arrivals" class="hs-section">
+    <div class="hs-product-section-header">
+        <div>
+            <div class="hs-section-title">New in</div>
+            <h2 class="hs-section-heading">Hàng mới về – cập nhật trước xu hướng</h2>
+            <p class="hs-section-description">
+                Đừng bỏ lỡ các dòng sản phẩm mới nhất, được The Face Shop chọn lọc cho từng nhu cầu làn da, mùa thời tiết
+                và xu hướng trang điểm hiện đại.
+            </p>
+        </div>
+        <a href="@Url.Action("ShowSP", "SanPham", new { sortBy = "new" })"
+           class="text-decoration-none fs-14 text-gradient-primary">
+            Xem tất cả hàng mới
+            <i class="fa-solid fa-arrow-right-long ms-1"></i>
+        </a>
+    </div>
+
+    <div class="row g-2 g-sm-3 g-md-3 g-lg-4">
+        @if (Model.NewArrivals != null && Model.NewArrivals.Any())
+        {
+            foreach (var sp in Model.NewArrivals)
+            {
+                var url = Url.Action("Details", "SanPham", new { id = sp.MASP });
+                string spImg = Url.Content("~/images/" + (string.IsNullOrWhiteSpace(sp.HINHANH)
+                    ? "no-image.png"
+                    : sp.HINHANH));
+
+                string brandName = sp.THUONGHIEU != null ? sp.THUONGHIEU.TENTH : "Thương hiệu khác";
+                string catName = sp.DANHMUC != null ? sp.DANHMUC.TENDANHMUC : sp.MADM;
+
+                decimal giaBan = sp.GIABAN;        // vì GIABAN là decimal, không nullable
+                decimal km = sp.KHUYENMAI;     // nếu KHUYENMAI cũng là decimal, không nullable
+                decimal giaGoc = km > 0
+                    ? Math.Round(giaBan / (1 - km / 100m), 0)
+                    : giaBan;
+
+
+                var labelBadge = sp.NGAYTAO > DateTime.Now.AddDays(-14)
+                ? "Mới 2 tuần gần đây"
+                : "Sản phẩm mới";
+                <div class="col-6 col-sm-4 col-md-3">
+                    <article class="hs-skin-card" style="min-width: 300px; max-height 300px">
+                        <div class="hs-product-media">
+                            <a href="@url">
+                                <img src="@spImg" alt="@sp.TENSP" />
+                            </a>
+                            <div class="hs-mag-pill" style="color: greenyellow">
+                                <i class="fa-solid fa-seedling me-1"></i>@labelBadge
+                            </div>
+                        </div>
+                        <div class="hs-product-body">
+                            <div class="hs-product-brand">@brandName</div>
+                            <div class="hs-product-name">
+                                <a href="@url">@sp.TENSP</a>
+                            </div>
+                            <div class="hs-product-category">@catName</div>
+
+                            <div class="hs-product-price-wrap">
+                                <div class="hs-product-price-current">
+                                    @money(giaBan)
+                                </div>
+                                @if (km > 0 && giaGoc > giaBan)
+                                {
+                                    <div class="hs-product-price-old">
+                                        @money(giaGoc)
+                                    </div>
+                                    <div class="hs-product-price-badge">-@km.ToString("0")%</div>
+                                }
+                            </div>
+
+                            <div class="hs-product-actions">
+                                <a href="@url" class="hs-product-btn-add">
+                                    <i class="fa-solid fa-eye"></i>
+                                    Xem chi tiết
+                                </a>
+
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-muted fs-14 mb-0">Chưa có dữ liệu hàng mới.</p>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ================= BRANDS ================= -->
+<section id="brands" class="hs-section">
+    <div class="hs-brand-strip">
+        <div class="hs-brand-strip-left">
+            <div class="hs-brand-strip-icon">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <div class="hs-brand-strip-text">
+                <strong>Thương hiệu được yêu thích tại The Face Shop</strong>
+                <span>Khám phá các brand Hàn Quốc &amp; quốc tế được tin dùng.</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="hs-section py-2 py-md-3">
+        <div class="row g-3 g-md-4">
+
+            <!-- THE FACE SHOP -->
+            <div class="col-12 col-md-4">
+                <a href="#" class="brand-card">
+                    <img src="~/images/T.jpg" class="brand-img">
+                    <div class="brand-gradient"></div>
+                    <div class="brand-text">
+                        <h3>THE FACE SHOP</h3>
+                        <p>Thương hiệu Hàn Quốc nổi bật về skincare tự nhiên</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- NARUKO -->
+            <div class="col-12 col-md-4">
+                <a href="#" class="brand-card">
+                    <img src="~/images/N.jpg" class="brand-img">
+                    <div class="brand-gradient"></div>
+                    <div class="brand-text">
+                        <h3>NARUKO</h3>
+                        <p>Dòng trà tràm – trà đỏ đình đám trị mụn cực mạnh</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- SOME BY MI -->
+            <div class="col-12 col-md-4">
+                <a href="#" class="brand-card">
+                    <img src="~/images/I.jpg" class="brand-img">
+                    <div class="brand-gradient"></div>
+                    <div class="brand-text">
+                        <h3>INNISFREE</h3>
+                        <p>AHA – BHA – PHA giúp tái tạo da & làm sạch sâu</p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+</section>
+
+<!-- ================= BEAUTY MAGAZINE ================= -->
+<section id="magazine" class="hs-section">
+    <div class="hs-product-section-header">
+        <div>
+            <div class="hs-section-title">Beauty magazine</div>
+            <h2 class="hs-section-heading">Góc chia sẻ bí kíp dưỡng da &amp; trang điểm</h2>
+            <p class="hs-section-description">
+                Tổng hợp tips chăm sóc da, gợi ý routine và cách dùng sản phẩm từ đội ngũ Beauty Advisor
+                &amp; các chuyên gia làm đẹp.
+            </p>
+        </div>
+        <a href="/CamNangLamDep/CamNangLamDep" class="text-decoration-none fs-14 text-gradient-primary">
+            Xem tất cả bài viết
+            <i class="fa-solid fa-arrow-right-long ms-1"></i>
+        </a>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+        <div class="col-md-4">
+            <article class="hs-mag-card">
+                <div class="hs-mag-media">
+                    <img src="~/images/101_11bfc85a2aad4b7fa36a944c63126109.png"
+                         alt="Routine dưỡng da buổi tối giúp da sáng mịn sau 14 ngày" />
+                    <span class="hs-mag-pill">Skincare basics</span>
+                </div>
+                <div class="hs-mag-body">
+                    <div class="hs-mag-meta">
+                        <span>5 phút đọc</span>
+                        <span class="dot">Da dầu mụn</span>
+                    </div>
+                    <h3 class="hs-mag-title">
+                        <a href="http://localhost:63197/CamNangLamDep/ChiTiet/3">
+                            Routine dưỡng da buổi tối giúp da sáng mịn sau 14 ngày
+                        </a>
+                    </h3>
+                    <p class="hs-mag-excerpt">
+                        Hướng dẫn chi tiết một quy trình skincare buổi tối giúp phục hồi da, cấp ẩm sâu và cải thiện độ sáng mịn một cách toàn diện.
+                    </p>
+                    <div class="hs-mag-footer">
+                        <span class="opacity-80">The Face Shop editor</span>
+                        <a href="http://localhost:63197/CamNangLamDep/ChiTiet/3">
+                            Đọc ngay
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-md-4">
+            <article class="hs-mag-card">
+                <div class="hs-mag-media">
+                    <img src="~/images/cham-soc-da.jpg"
+                         alt="Makeup đi làm nhẹ nhàng" />
+                    <span class="hs-mag-pill">Makeup routine</span>
+                </div>
+                <div class="hs-mag-body">
+                    <div class="hs-mag-meta">
+                        <span>3 phút đọc</span>
+                        <span class="dot">Văn phòng</span>
+                    </div>
+                    <h3 class="hs-mag-title">
+                        <a href="http://localhost:63197/CamNangLamDep/ChiTiet/4">
+                            Makeup đi làm: 5 bước cơ bản giúp bạn tươi tắn cả ngày mà không bị dày mặt
+                        </a>
+                    </h3>
+                    <p class="hs-mag-excerpt">
+                        Gợi ý combo cushion, má hồng, kẻ mày và son môi tự nhiên phù hợp với môi trường công sở hiện đại.
+                    </p>
+                    <div class="hs-mag-footer">
+                        <span class="opacity-80">Beauty Advisor</span>
+                        <a href="http://localhost:63197/CamNangLamDep/ChiTiet/4">
+                            Đọc ngay
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-md-4">
+            <article class="hs-mag-card">
+                <div class="hs-mag-media">
+                    <img src="~/images/bv_20251207002644869.jpeg"
+                         alt="Repair skin barrier" />
+                    <span class="hs-mag-pill">Skin barrier</span>
+                </div>
+                <div class="hs-mag-body">
+                    <div class="hs-mag-meta">
+                        <span>7 phút đọc</span>
+                        <span class="dot">Da nhạy cảm</span>
+                    </div>
+                    <h3 class="hs-mag-title">
+                        <a href="http://localhost:63197/CamNangLamDep/ChiTiet/5">
+                            Cách chọn sữa rửa mặt phù hợp với từng loại da
+                        </a>
+                    </h3>
+                    <p class="hs-mag-excerpt">
+                        Hướng dẫn chọn đúng sữa rửa mặt cho da dầu, da khô, da hỗn hợp và da nhạy cảm.
+                    </p>
+                    <div class="hs-mag-footer">
+                        <span class="opacity-80">Dr. Belmeur</span>
+                        <a href="http://localhost:63197/CamNangLamDep/ChiTiet/5">
+                            Đọc ngay
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ================= MEMBERSHIP / LOYALTY ================= -->
+<section id="membership" class="hs-section">
+    <div class="row g-3 g-lg-4">
+        <div class="col-lg-12">
+            <div class="hs-membership">
+                <div class="hs-membership-inner">
+                    <div class="hs-membership-badge">
+                        <i class="fa-solid fa-gem"></i>
+                        My Beauty Club – Chương trình thành viên The Face Shop
+                    </div>
+                    <h2 class="hs-membership-title">
+                        Tích điểm càng nhiều, ưu đãi càng “đậm”.
+                    </h2>
+                    <p class="hs-membership-sub">
+                        Mỗi 10.000₫ chi tiêu bạn nhận điểm thưởng, dễ dàng đổi quà, voucher giảm giá hoặc quà độc quyền
+                        chỉ dành cho thành viên.
+                    </p>
+
+                    <div class="hs-membership-perks">
+                        <div class="hs-membership-perk">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Tích điểm tất cả hoá đơn online &amp; offline
+                        </div>
+                        <div class="hs-membership-perk">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Ưu đãi sinh nhật riêng theo hạng thẻ
+                        </div>
+                        <div class="hs-membership-perk">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Quyền tham gia workshop &amp; event làm đẹp
+                        </div>
+                        <div class="hs-membership-perk">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Ưu tiên trải nghiệm sản phẩm mới
+                        </div>
+                    </div>
+
+                    <div class="hs-hero-cta mt-3">
+                        <a href="@Url.Action("DangNhap", "Home")" class="hs-btn-primary">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Đăng nhập để xem ưu đãi của bạn
+                        </a>
+                        <a href="@Url.Action("DangKy", "Home")" class="hs-btn-outline">
+                            <i class="fa-solid fa-user-plus"></i>
+                            Đăng ký tài khoản mới
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    <script>
+        // ====== FLASH SALE COUNTDOWN (DEMO) ======
+        (function () {
+            // Set demo countdown 3 giờ từ lúc load
+            var duration = 3 * 60 * 60; // 3h -> seconds
+            var endTime = Date.now() + duration * 1000;
+
+            function pad(num) {
+                return num < 10 ? "0" + num : "" + num;
+            }
+
+            function updateCountdown() {
+                var now = Date.now();
+                var diff = Math.max(0, Math.floor((endTime - now) / 1000));
+                var h = Math.floor(diff / 3600);
+                var m = Math.floor((diff % 3600) / 60);
+                var s = diff % 60;
+
+                var hEl = document.getElementById("hsFlashHour");
+                var mEl = document.getElementById("hsFlashMinute");
+                var sEl = document.getElementById("hsFlashSecond");
+
+                if (!hEl || !mEl || !sEl) return;
+
+                hEl.textContent = pad(h);
+                mEl.textContent = pad(m);
+                sEl.textContent = pad(s);
+
+                if (diff <= 0) {
+                    clearInterval(timer);
+                }
+            }
+
+            updateCountdown();
+            var timer = setInterval(updateCountdown, 1000);
+        })();
+
+        // ====== SCROLL NAV ACTIVE STATE ======
+        (function () {
+            var navLinks = document.querySelectorAll(".hs-scroll-nav-pill");
+
+            navLinks.forEach(function (link) {
+                link.addEventListener("click", function (e) {
+                    // scroll tới id
+                    var href = this.getAttribute("href");
+                    if (href && href.startsWith("#")) {
+                        e.preventDefault();
+                        var target = document.querySelector(href);
+                        if (target) {
+                            window.scrollTo({
+                                top: target.getBoundingClientRect().top + window.pageYOffset - 100,
+                                behavior: "smooth"
+                            });
+                        }
+                    }
+
+                    // set active
+                    navLinks.forEach(function (l) { l.classList.remove("active"); });
+                    this.classList.add("active");
+                });
+            });
+        })();
+
+        // ====== FLOATING SUPPORT BUTTON (DEMO) ======
+        (function () {
+            var btn = document.getElementById("hsSupportBtn");
+            var tooltip = document.querySelector(".hs-support-tooltip");
+
+            if (!btn || !tooltip) return;
+
+            btn.addEventListener("mouseenter", function () {
+                tooltip.style.opacity = "1";
+            });
+
+            btn.addEventListener("mouseleave", function () {
+                tooltip.style.opacity = "1";
+            });
+
+            btn.addEventListener("click", function () {
+                alert("Tư vấn viên The Face Shop sẽ sớm hỗ trợ bạn. (Tích hợp chat / hotline sau này)");
+            });
+        })();
+    </script>
+}
+

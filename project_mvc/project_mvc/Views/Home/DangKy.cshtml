@@ -1,0 +1,705 @@
+﻿@{
+    ViewBag.Title = "Đăng ký";
+    bool hasError = !ViewData.ModelState.IsValid;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewBag.Title – THE FACE SHOP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap & Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+
+    <!-- CSS riêng -->
+    <link rel="stylesheet" href="~/Content/style-auth.css" />
+
+    <style>
+        /* =====================================================================
+           1. BIẾN MÀU – TÔNG HỒNG NHẸ, TINH TẾ (GIỐNG TRANG ĐĂNG NHẬP)
+        ===================================================================== */
+        :root {
+            --hs-body-bg: #fdf2f8;
+            --hs-body-bg-soft: #fef6fb;
+            --hs-primary: #ec4899; /* Hồng chủ đạo */
+            --hs-primary-soft: #fbcfe8; /* Hồng nhạt */
+            --hs-primary-soft-2: #f9a8d4; /* Hồng pastel */
+            --hs-primary-deep: #db2777; /* Hồng đậm */
+
+            --hs-card-bg: rgba(255, 255, 255, 0.92);
+            --hs-card-border: rgba(244, 114, 182, 0.25);
+            --hs-text-main: #111827;
+            --hs-text-muted: #6b7280;
+            --hs-input-bg: rgba(255, 255, 255, 0.9);
+            --hs-input-border: rgba(148, 163, 184, 0.65);
+            --hs-input-border-focus: rgba(236, 72, 153, 0.9);
+            --hs-shadow-soft: 0 22px 60px rgba(219, 39, 119, 0.22);
+            --hs-shadow-subtle: 0 0 0 1px rgba(248, 250, 252, 0.85);
+            --hs-radius-xl: 24px;
+            --hs-radius-lg: 18px;
+            --hs-radius-pill: 999px;
+            --hs-transition-fast: 150ms ease-out;
+            --hs-transition-normal: 220ms ease;
+        }
+
+        /* =====================================================================
+           2. TỔNG THỂ BODY & NỀN (Y HỆT LOGIN)
+        ===================================================================== */
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--hs-text-main);
+            background: radial-gradient(circle at 0% 0%, rgba(251, 207, 232, 0.95) 0, transparent 52%), radial-gradient(circle at 100% 100%, rgba(219, 234, 254, 0.90) 0, transparent 58%), linear-gradient(135deg, var(--hs-body-bg) 0%, var(--hs-body-bg-soft) 100%);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Glow background elements */
+        .bg-glow-bubble {
+            position: fixed;
+            border-radius: 999px;
+            filter: blur(40px);
+            opacity: 0.7;
+            z-index: 0;
+            pointer-events: none;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .bg-glow-bubble--pink {
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.65) 0, transparent 70%);
+            top: -40px;
+            right: -20px;
+            animation: glowFloat1 13s ease-in-out infinite alternate;
+        }
+
+        .bg-glow-bubble--soft {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(251, 207, 232, 0.9) 0, transparent 72%);
+            bottom: -40px;
+            left: -40px;
+            animation: glowFloat2 16s ease-in-out infinite alternate;
+        }
+
+        .bg-glow-bubble--tiny {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(248, 250, 252, 0.85) 0, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: glowPulse 18s ease-in-out infinite alternate;
+        }
+
+        /* =====================================================================
+           3. KHUNG CHÍNH AUTH
+        ===================================================================== */
+        .auth-wrapper {
+            min-height: 100vh;
+            padding: 32px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-inner {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* =====================================================================
+           4. THẺ ĐĂNG KÝ (DÙNG LẠI CLASS login-card)
+        ===================================================================== */
+        .login-card {
+            position: relative;
+            width: 100%;
+            border-radius: var(--hs-radius-xl);
+            border: 1px solid var(--hs-card-border);
+            background: var(--hs-card-bg);
+            box-shadow: var(--hs-shadow-soft), var(--hs-shadow-subtle);
+            backdrop-filter: blur(20px);
+            padding: 28px 22px;
+            overflow: hidden;
+            transform-origin: center;
+            animation: cardEnter 420ms cubic-bezier(0.23, 0.85, 0.35, 1.1) 60ms both;
+        }
+
+            .login-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.35) 0, transparent 52%), radial-gradient(circle at 100% 100%, rgba(244, 114, 182, 0.22) 0, transparent 58%);
+                opacity: 0.9;
+                pointer-events: none;
+            }
+
+        .login-card-shell {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =====================================================================
+           5. HEADER ĐĂNG KÝ
+        ===================================================================== */
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            color: var(--hs-text-main);
+        }
+
+        .login-subtitle {
+            font-size: 0.92rem;
+            color: var(--hs-text-muted);
+        }
+
+        /* =====================================================================
+           6. THÔNG BÁO LỖI
+        ===================================================================== */
+        .login-alert {
+            margin-bottom: 1rem;
+            border-radius: 0.75rem;
+            padding: 7px 12px;
+            font-size: 0.86rem;
+            background: rgba(254, 226, 226, 0.9);
+            border: 1px solid rgba(248, 113, 113, 0.8);
+            color: #b91c1c;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            animation: alertFadeIn 280ms ease-out both;
+        }
+
+            .login-alert i {
+                font-size: 0.9rem;
+                margin-top: 2px;
+            }
+
+        /* =====================================================================
+           7. FORM INPUTS
+        ===================================================================== */
+        .form-section {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-control {
+            border-radius: var(--hs-radius-lg);
+            border: 1px solid var(--hs-input-border);
+            background-color: var(--hs-input-bg);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.92rem;
+            transition: border-color var(--hs-transition-normal), box-shadow var(--hs-transition-normal), background-color var(--hs-transition-fast), transform var(--hs-transition-fast);
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: var(--hs-input-border-focus);
+                box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.3), 0 10px 35px rgba(236, 72, 153, 0.28);
+                background-color: #ffffff;
+                transform: translateY(-1px);
+            }
+
+            .form-control::placeholder {
+                color: rgba(148, 163, 184, 0.9);
+                font-size: 0.88rem;
+            }
+
+        .input-group {
+            border-radius: var(--hs-radius-lg);
+            overflow: hidden;
+            background-color: var(--hs-input-bg);
+        }
+
+            .input-group .form-control {
+                border-right: 0;
+                border-radius: var(--hs-radius-lg) 0 0 var(--hs-radius-lg);
+            }
+
+            .input-group .btn-toggle-pwd {
+                border-radius: 0 var(--hs-radius-lg) var(--hs-radius-lg) 0;
+                border: 1px solid var(--hs-input-border);
+                border-left: 0;
+                background: linear-gradient(135deg, rgba(253, 242, 248, 0.9), rgba(251, 207, 232, 0.9));
+                color: #9f1239;
+                padding-inline: 0.9rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: background-color var(--hs-transition-fast), color var(--hs-transition-fast);
+            }
+
+                .input-group .btn-toggle-pwd:hover {
+                    background: linear-gradient(135deg, rgba(251, 207, 232, 1), rgba(249, 168, 212, 1));
+                    color: #9f1239;
+                }
+
+                .input-group .btn-toggle-pwd i {
+                    font-size: 0.9rem;
+                }
+
+        .invalid-feedback {
+            font-size: 0.78rem;
+            margin-top: 0.2rem;
+        }
+
+        .text-helper {
+            font-size: 0.78rem;
+            color: var(--hs-text-muted);
+            margin-top: 0.15rem;
+        }
+
+        /* =====================================================================
+           8. ĐIỀU KHOẢN + LINK LOG IN
+        ===================================================================== */
+        .terms-row {
+            margin-bottom: 1rem;
+        }
+
+        .form-check-input {
+            width: 15px;
+            height: 15px;
+            margin-top: 1px;
+            border-radius: 5px;
+            border-color: rgba(148, 163, 184, 0.8);
+            cursor: pointer;
+        }
+
+            .form-check-input:checked {
+                background-color: var(--hs-primary);
+                border-color: var(--hs-primary);
+                box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.25);
+            }
+
+        .form-check-label {
+            font-size: 0.82rem;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .link-ghost {
+            font-size: 0.85rem;
+            text-decoration: none;
+            color: var(--hs-primary-deep);
+            position: relative;
+            padding-bottom: 1px;
+        }
+
+            .link-ghost::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 1px;
+                width: 0;
+                background: linear-gradient(to right, #f472b6, #ec4899);
+                transition: width var(--hs-transition-normal);
+            }
+
+            .link-ghost:hover::after {
+                width: 100%;
+            }
+
+        /* =====================================================================
+           9. NÚT ĐĂNG KÝ
+        ===================================================================== */
+        .btn-login-main {
+            border-radius: var(--hs-radius-pill);
+            border: none;
+            background: radial-gradient(circle at 0% 0%, #f9a8d4 0, transparent 60%), linear-gradient(135deg, #ec4899, #db2777);
+            color: #ffffff;
+            padding: 0.65rem 1rem;
+            font-size: 0.98rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 16px 40px rgba(219, 39, 119, 0.45);
+            transform: translateY(0);
+            transition: transform var(--hs-transition-normal), box-shadow var(--hs-transition-normal), filter var(--hs-transition-fast);
+        }
+
+            .btn-login-main i {
+                font-size: 0.95rem;
+            }
+
+            .btn-login-main:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 20px 60px rgba(219, 39, 119, 0.65);
+                filter: brightness(1.04);
+            }
+
+            .btn-login-main:active {
+                transform: translateY(0px) scale(0.98);
+                box-shadow: 0 10px 30px rgba(190, 24, 93, 0.55);
+            }
+
+        /* =====================================================================
+           10. FOOTER
+        ===================================================================== */
+        .login-footer {
+            margin-top: 1.1rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(248, 187, 208, 0.7);
+        }
+
+        .login-footer-text {
+            font-size: 0.78rem;
+            color: var(--hs-text-muted);
+            text-align: center;
+        }
+
+        /* =====================================================================
+           11. RESPONSIVE
+        ===================================================================== */
+        @@media (min-width: 576px) {
+            .login-card {
+                padding: 30px 26px;
+            }
+        }
+
+        @@media (min-width: 768px) {
+            .auth-wrapper {
+                padding: 40px 16px;
+            }
+
+            .login-card {
+                padding: 32px 32px 30px 32px;
+            }
+
+            .login-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .auth-wrapper {
+                padding-top: 22px;
+                padding-bottom: 22px;
+            }
+
+            .login-card {
+                border-radius: 20px;
+                padding: 24px 18px;
+            }
+
+            .btn-login-main {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* =====================================================================
+           12. ANIMATIONS (giống login)
+        ===================================================================== */
+        @@keyframes cardEnter {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, 14px, 0) scale(0.98);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translate3d(0, -3px, 0) scale(1.01);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+        }
+
+        @@keyframes glowFloat1 {
+            0% {
+                transform: translate3d(0, 0, 0);
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translate3d(-14px, 12px, 0);
+                opacity: 0.6;
+            }
+        }
+
+        @@keyframes glowFloat2 {
+            0% {
+                transform: translate3d(0, 0, 0);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translate3d(18px, -18px, 0);
+                opacity: 0.45;
+            }
+        }
+
+        @@keyframes glowPulse {
+            0% {
+                transform: translate3d(-50%, 0, 0) scale(1);
+                opacity: 0.75;
+            }
+
+            100% {
+                transform: translate3d(-46%, 4px, 0) scale(1.08);
+                opacity: 0.4;
+            }
+        }
+
+        @@keyframes alertFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Glow background elements -->
+    <div class="bg-glow-bubble bg-glow-bubble--pink"></div>
+    <div class="bg-glow-bubble bg-glow-bubble--soft"></div>
+    <div class="bg-glow-bubble bg-glow-bubble--tiny"></div>
+
+    <div class="auth-wrapper">
+        <div class="auth-inner">
+            <div class="login-card">
+                <div class="login-card-shell">
+
+                    <!-- HEADER -->
+                    <div class="login-header">
+                        <h1 class="login-title">Đăng ký tài khoản</h1>
+                        <p class="login-subtitle">
+                            Tạo tài khoản để lưu đơn hàng, sổ địa chỉ và nhận ưu đãi riêng cho bạn.
+                        </p>
+                    </div>
+
+                    <!-- TÓM TẮT LỖI (MODELSTATE) -->
+                    @if (hasError)
+                    {
+                        <div class="login-alert">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                            @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                        </div>
+                    }
+
+                    <!-- FORM -->
+                    @using (Html.BeginForm("DangKy", "Home", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate", id = "registerForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-section">
+                            <!-- Họ tên -->
+                            <div class="mb-3">
+                                <label class="form-label" for="HOTEN">Họ và tên</label>
+                                <input id="HOTEN" name="HOTEN" type="text"
+                                       class="form-control"
+                                       placeholder="VD: Nguyễn Văn An"
+                                       required />
+                                <div class="invalid-feedback">Vui lòng nhập họ và tên.</div>
+                                @Html.ValidationMessage("HOTEN", "", new { @class = "text-helper text-danger fw-semibold mt-1 d-block" })
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label class="form-label" for="EMAIL">Email</label>
+                                <input id="EMAIL" name="EMAIL" type="email"
+                                       class="form-control"
+                                       placeholder="an.nguyen@example.com"
+                                       required />
+                                <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                                @Html.ValidationMessage("EMAIL", "", new { @class = "text-helper text-danger fw-semibold mt-1 d-block" })
+                            </div>
+
+                            <!-- Mật khẩu -->
+                            <div class="mb-3">
+                                <label class="form-label" for="MATKHAU">Mật khẩu</label>
+                                <div class="input-group">
+                                    <input id="MATKHAU" name="MATKHAU" type="password"
+                                           class="form-control"
+                                           placeholder="Tối thiểu 6 ký tự"
+                                           minlength="6"
+                                           required />
+                                    <button class="btn btn-toggle-pwd" type="button" id="togglePwd">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="text-helper">
+                                    Nên dùng mật khẩu &gt; 8 ký tự, có chữ hoa, số và ký tự đặc biệt.
+                                </div>
+                                <div class="invalid-feedback">Mật khẩu tối thiểu 6 ký tự.</div>
+                                @Html.ValidationMessage("MATKHAU", "", new { @class = "text-helper text-danger fw-semibold mt-1 d-block" })
+                            </div>
+
+                            <!-- Xác nhận mật khẩu -->
+                            <div class="mb-3">
+                                <label class="form-label" for="ConfirmPassword">Xác nhận mật khẩu</label>
+                                <div class="input-group">
+                                    <input id="ConfirmPassword" name="ConfirmPassword" type="password"
+                                           class="form-control"
+                                           placeholder="Nhập lại mật khẩu"
+                                           minlength="6"
+                                           required />
+                                    <button class="btn btn-toggle-pwd" type="button" id="toggleConfirm">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">Vui lòng nhập trùng với mật khẩu.</div>
+                                @Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-helper text-danger fw-semibold mt-1 d-block" })
+                            </div>
+                        </div>
+
+                        <!-- Điều khoản -->
+                        <div class="terms-row">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required />
+                                <label class="form-check-label" for="terms">
+                                    Tôi đồng ý với
+                                    <a href="#" class="link-ghost">Điều khoản</a>
+                                    và
+                                    <a href="#" class="link-ghost">Chính sách bảo mật</a>
+                                    của THE FACE SHOP.
+                                </label>
+                                <div class="invalid-feedback">
+                                    Bạn cần chấp nhận điều khoản để tiếp tục.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nút đăng ký -->
+                        <div class="d-grid mb-2">
+                            <button type="submit" class="btn btn-login-main">
+                                <i class="fa-regular fa-circle-check"></i>
+                                <span>Đăng ký</span>
+                            </button>
+                        </div>
+
+                        <!-- Link đã có tài khoản -->
+                        <div class="text-center mt-2" style="font-size:0.85rem;">
+                            Đã có tài khoản?
+                            <a href="@Url.Action("DangNhap","Home")" class="link-ghost">
+                                Đăng nhập ngay
+                            </a>
+                        </div>
+                    }
+
+                    <!-- Footer nhỏ -->
+                    <div class="login-footer">
+                        <p class="login-footer-text">
+                            Chúng tôi chỉ sử dụng thông tin của bạn để phục vụ mua sắm & chăm sóc khách hàng.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 1. Bootstrap validation
+        (function () {
+            var form = document.getElementById("registerForm");
+            if (!form) return;
+
+            form.addEventListener("submit", function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add("was-validated");
+            });
+        })();
+
+        // 2. Hiện / ẩn mật khẩu + xác nhận mật khẩu
+        (function () {
+            var pwd = document.getElementById("MATKHAU");
+            var confirmPwd = document.getElementById("ConfirmPassword");
+            var btnPwd = document.getElementById("togglePwd");
+            var btnConfirm = document.getElementById("toggleConfirm");
+
+            function toggleField(input, btn) {
+                if (!input || !btn) return;
+                btn.addEventListener("click", function () {
+                    var isPwd = input.getAttribute("type") === "password";
+                    input.setAttribute("type", isPwd ? "text" : "password");
+
+                    var icon = btn.querySelector("i");
+                    if (icon) {
+                        if (isPwd) {
+                            icon.classList.remove("fa-eye");
+                            icon.classList.add("fa-eye-slash");
+                        } else {
+                            icon.classList.remove("fa-eye-slash");
+                            icon.classList.add("fa-eye");
+                        }
+                    }
+                });
+            }
+
+            toggleField(pwd, btnPwd);
+            toggleField(confirmPwd, btnConfirm);
+
+            // Kiểm tra 2 mật khẩu trùng nhau (client-side)
+            function validateConfirm() {
+                if (!pwd || !confirmPwd) return;
+                if (confirmPwd.value && pwd.value && confirmPwd.value !== pwd.value) {
+                    confirmPwd.setCustomValidity("Mật khẩu không khớp");
+                } else {
+                    confirmPwd.setCustomValidity("");
+                }
+            }
+
+            if (pwd && confirmPwd) {
+                pwd.addEventListener("input", validateConfirm);
+                confirmPwd.addEventListener("input", validateConfirm);
+            }
+        })();
+
+        // 3. Focus auto vào ô Họ tên
+        (function () {
+            var nameInput = document.getElementById("HOTEN");
+            if (nameInput) {
+                setTimeout(function () {
+                    try { nameInput.focus(); } catch (e) { }
+                }, 260);
+            }
+        })();
+    </script>
+
+</body>
+</html>

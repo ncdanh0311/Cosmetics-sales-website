@@ -1,0 +1,689 @@
+﻿@model project_mvc.Models.QuanLyDonHangViewModel
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Views/Shared/layoutAdmin.cshtml";
+
+    string keyword = ViewBag.Keyword as string;
+    string statusFilter = ViewBag.StatusFilter as string;
+    int? currentId = ViewBag.CurrentOrderId as int?;
+}
+
+@section Styles{
+    <style>
+        :root {
+            --hs-pink: #ec4899;
+            --hs-pink-strong: #db2777;
+            --hs-pink-soft: #fdf2f8;
+            --hs-bg: #f5f7fb;
+            --hs-text: #111827;
+            --hs-muted: #6b7280;
+        }
+
+        body {
+            background: var(--hs-bg);
+        }
+
+        .page-header-box {
+            background: linear-gradient(135deg,#f9a8d4 0%,#ec4899 45%,#db2777 100%);
+            padding: 18px 22px;
+            border-radius: 18px;
+            color: #fff;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 26px rgba(236,72,153,.3);
+        }
+
+        .page-header-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: .02em;
+        }
+
+        .page-header-sub {
+            font-size: .9rem;
+            opacity: .95;
+        }
+
+        .orders-form-card,
+        .orders-table-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 16px 18px 20px;
+            border: 1px solid rgba(148,163,184,.25);
+            box-shadow: 0 18px 40px rgba(15,23,42,.06);
+        }
+
+        .orders-form-card {
+            position: sticky;
+            top: 84px;
+        }
+
+        .order-title-main {
+            font-weight: 650;
+            color: var(--hs-text);
+            margin-bottom: 4px;
+        }
+
+        .order-meta-label {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #9ca3af;
+            margin-bottom: 2px;
+        }
+
+        .order-meta-value {
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--hs-text);
+        }
+
+        .order-meta-total {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #e11d48;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: .8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            border: 1px solid transparent;
+            gap: 4px;
+        }
+
+            .status-pill span.icon-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 999px;
+                background: #9ca3af;
+            }
+
+        .st-pending {
+            background: #fff7ed;
+            color: #c2410c;
+            border-color: #fed7aa;
+        }
+
+        .st-shipping {
+            background: #ecfdf5;
+            color: #047857;
+            border-color: #bbf7d0;
+        }
+
+        .st-success {
+            background: #ecfeff;
+            color: #0f766e;
+            border-color: #a5f3fc;
+        }
+
+        .st-cancel {
+            background: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .93rem;
+        }
+
+            .order-items-table thead {
+                background: var(--hs-pink-soft);
+            }
+
+            .order-items-table th {
+                padding: 8px 10px;
+                font-size: .8rem;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                color: #9d174d;
+                border-bottom: 1px solid #fce7f3;
+            }
+
+            .order-items-table td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #e5e7eb;
+                color: #374151;
+            }
+
+        .order-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+            color: var(--hs-text);
+        }
+
+        .order-item-sub {
+            font-size: .8rem;
+            color: var(--hs-muted);
+        }
+
+        .col-price {
+            font-weight: 600;
+            color: #e11d48;
+            white-space: nowrap;
+        }
+
+        .col-subtotal {
+            font-weight: 700;
+            color: #be123c;
+            white-space: nowrap;
+        }
+
+        .btn-update-status {
+            background: linear-gradient(135deg,var(--hs-pink),var(--hs-pink-strong));
+            border: none;
+            border-radius: 999px;
+            padding: 7px 14px;
+            color: #fff;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+
+            .btn-update-status:hover {
+                opacity: .92;
+            }
+
+        .btn-cancel-order {
+            background: #fee2e2;
+            border: none;
+            border-radius: 999px;
+            padding: 7px 18px;
+            color: #b91c1c;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+
+            .btn-cancel-order:hover {
+                background: #fecaca;
+            }
+
+        .orders-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .orders-table-title {
+            font-weight: 600;
+            color: var(--hs-text);
+        }
+
+        .search-note {
+            font-size: .78rem;
+            color: var(--hs-muted);
+        }
+
+        .orders-table-card .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--hs-muted);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table tbody tr {
+            cursor: pointer;
+            transition: background-color .12s ease;
+        }
+
+            .table tbody tr:hover {
+                background-color: #f9fafb;
+            }
+
+        .row-selected {
+            background: #fdf2f8 !important;
+        }
+
+        .cell-stt {
+            width: 44px;
+            text-align: center;
+            font-size: .85rem;
+            color: #6b7280;
+        }
+
+        .status-badge-small {
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .sb-pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .sb-shipping {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .sb-success {
+            background: #ecfeff;
+            color: #0f766e;
+        }
+
+        .sb-cancel {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .btn-view-order {
+            border-radius: 999px;
+            border: none;
+            padding: 5px 12px;
+            font-size: .8rem;
+            background: #f3f4ff;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            border-radius: 999px;
+            font-size: .82rem;
+        }
+
+        @@media (max-width: 991.98px) {
+            .orders-form-card {
+                position: static;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+}
+
+<div class="page-header-box">
+    <div class="page-header-title">
+        <i class="bi bi-receipt-cutoff me-1"></i> Quản lý đơn hàng
+    </div>
+    <div class="page-header-sub">
+        Xem, lọc và cập nhật trạng thái các đơn hàng của khách.
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4 align-items-start">
+    <!-- FORM CHI TIẾT ĐƠN -->
+    <div class="col-lg-4">
+        <div class="orders-form-card">
+            @if (Model.DonHang == null)
+            {
+                <div>
+                    <h5 class="order-title-main mb-2">
+                        Chọn một đơn hàng ở bảng bên phải
+                    </h5>
+                    <p class="text-muted mb-0" style="font-size:.9rem;">
+                        Nhấp vào một dòng đơn hàng để xem chi tiết và cập nhật trạng thái.
+                    </p>
+                </div>
+            }
+            else
+            {
+                // ====== C# BLOCK CHUẨN RAZOR ======
+                var don = Model.DonHang;
+                var stClass = "st-pending";
+                if (don.TRANGTHAI == "Đang vận chuyển")
+                {
+                    stClass = "st-shipping";
+                }
+                else if (don.TRANGTHAI == "Giao thành công")
+                {
+                    stClass = "st-success";
+                }
+                else if (don.TRANGTHAI == "Đã hủy")
+                {
+                    stClass = "st-cancel";
+                }
+
+                bool lockStatus = don.TRANGTHAI == "Đã hủy" || don.TRANGTHAI == "Giao thành công";
+                bool canCancel = don.TRANGTHAI == "Chờ xác nhận" || don.TRANGTHAI == "Đang vận chuyển";
+
+                object dropdownAttrs;
+                if (lockStatus)
+                {
+                    dropdownAttrs = new { @class = "form-select form-select-sm mb-2", disabled = "disabled" };
+                }
+                else
+                {
+                    dropdownAttrs = new { @class = "form-select form-select-sm mb-2" };
+                }
+
+                <div>
+                    <h5 class="order-title-main mb-1">
+                        Đơn hàng #@don.MADH
+                    </h5>
+                    <div class="mb-2 text-muted" style="font-size:.86rem;">
+                        Đặt lúc @don.NGAYDAT.ToString("HH:mm dd/MM/yyyy")
+                    </div>
+
+                    <div class="mb-2">
+                        <span class="status-pill @stClass">
+                            <span class="icon-dot"></span>
+                            @don.TRANGTHAI
+                        </span>
+                    </div>
+
+                    @if (lockStatus)
+                    {
+                        <div class="text-danger mb-2" style="font-size:.8rem;">
+                            Đơn hàng đã ở trạng thái cuối (@don.TRANGTHAI), không thể thay đổi trạng thái nữa.
+                        </div>
+                    }
+
+                    <div class="mt-3 mb-3">
+                        <div class="order-meta-label">Khách hàng</div>
+                        <div class="order-meta-value">
+                            @(don.NGUOIDUNG != null ? don.NGUOIDUNG.HOTEN : "Không rõ")
+                        </div>
+                    </div>
+
+                    <div class="order-meta-grid mb-3" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;">
+                        <div>
+                            <div class="order-meta-label">Mã đơn</div>
+                            <div class="order-meta-value">#@don.MADH</div>
+                        </div>
+                        <div>
+                            <div class="order-meta-label">Ngày đặt</div>
+                            <div class="order-meta-value">@don.NGAYDAT.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                        <div>
+                            <div class="order-meta-label">Địa chỉ giao</div>
+                            <div class="order-meta-value">@don.DIACHI_GIAO</div>
+                        </div>
+                        <div>
+                            <div class="order-meta-label">Tổng tiền</div>
+                            <div class="order-meta-total">@don.TONGTIEN.ToString("N0") ₫</div>
+                        </div>
+                    </div>
+
+                    <!-- Cập nhật trạng thái -->
+                    @using (Html.BeginForm("CapNhatTrangThai", "QLDonHangAdmin", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("id", don.MADH)
+                        @Html.Hidden("keyword", keyword)
+                        @Html.Hidden("statusFilter", statusFilter)
+
+                        <div class="mb-2">
+                            <label class="order-meta-label d-block">Cập nhật trạng thái</label>
+                            @Html.DropDownList("trangThai", Model.TrangThaiList, dropdownAttrs)
+                        </div>
+
+                        <button type="submit"
+                                class="btn-update-status"
+                                @(lockStatus ? "disabled=\"disabled\"" : "")>
+                            <i class="bi bi-check-circle"></i> Lưu trạng thái
+                        </button>
+                    }
+
+                    <!-- Nút HỦY ĐƠN (mở modal) -->
+                    <div class="mt-2">
+                        @if (canCancel)
+                        {
+                            <button type="button"
+                                    class="btn-cancel-order mt-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalHuyDon">
+                                <i class="bi bi-x-circle"></i> Hủy đơn hàng
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn-cancel-order mt-1" disabled="disabled">
+                                <i class="bi bi-x-circle"></i> Hủy đơn hàng
+                            </button>
+                        }
+                    </div>
+
+                    <hr class="mt-3 mb-3" />
+
+                    <!-- Danh sách SP -->
+                    <div class="mb-2" style="font-weight:600;">Sản phẩm trong đơn</div>
+
+                    <table class="order-items-table">
+                        <thead>
+                            <tr>
+                                <th>SP</th>
+                                <th>Sản phẩm</th>
+                                <th>Đơn giá</th>
+                                <th style="text-align:center;">SL</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ct in don.CT_DONHANG)
+                            {
+                                var lineTotal = ct.DONGIA * ct.SOLUONG;
+                                var img = (ct.SANPHAM != null && !string.IsNullOrEmpty(ct.SANPHAM.HINHANH))
+                                    ? Url.Content("~/Images/" + ct.SANPHAM.HINHANH)
+                                    : Url.Content("~/Images/no-image.png");
+
+                                <tr>
+                                    <td>
+                                        <img src="@img" class="order-img" alt="Ảnh @ct.SANPHAM?.TENSP" />
+                                    </td>
+                                    <td>
+                                        <div class="order-item-name">
+                                            @(ct.SANPHAM != null ? ct.SANPHAM.TENSP : "")
+                                        </div>
+                                        <div class="order-item-sub">
+                                            Mã: @ct.MASP
+                                        </div>
+                                    </td>
+                                    <td class="col-price">@ct.DONGIA.ToString("N0") ₫</td>
+                                    <td style="text-align:center;">@ct.SOLUONG</td>
+                                    <td class="col-subtotal">@lineTotal.ToString("N0") ₫</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- BẢNG DANH SÁCH ĐƠN -->
+    <div class="col-lg-8">
+        <div class="orders-table-card">
+            <div class="orders-table-header">
+                <div>
+                    <div class="orders-table-title">
+                        <i class="bi bi-list-ul me-1"></i> Danh sách đơn hàng
+                    </div>
+                    <div class="search-note">
+                        Nhấp vào một dòng để xem chi tiết. Có thể lọc theo trạng thái / từ khóa.
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    @using (Html.BeginForm("QuanLyDonHang", "QLDonHangAdmin",
+                            FormMethod.Get,
+                            new { @class = "d-flex gap-2 flex-wrap" }))
+                    {
+                        <input type="text"
+                               name="keyword"
+                               value="@keyword"
+                               class="form-control form-control-sm"
+                               placeholder="Mã đơn, khách, địa chỉ..." />
+
+                        <select name="statusFilter"
+                                class="form-select form-select-sm filter-select"
+                                onchange="this.form.submit()">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="Chờ xác nhận" @(statusFilter == "Chờ xác nhận" ? "selected" : "")>Chờ xác nhận</option>
+                            <option value="Đang vận chuyển" @(statusFilter == "Đang vận chuyển" ? "selected" : "")>Đang vận chuyển</option>
+                            <option value="Giao thành công" @(statusFilter == "Giao thành công" ? "selected" : "")>Giao thành công</option>
+                            <option value="Đã hủy" @(statusFilter == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                        </select>
+
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DanhSach != null && Model.DanhSach.Any())
+                    {
+                        int stt = 1;
+                        foreach (var d in Model.DanhSach)
+                        {
+                            var rowClass = currentId.HasValue && currentId.Value == d.MADH ? "row-selected" : "";
+
+                            var sbClass = "sb-pending";
+                            if (d.TRANGTHAI == "Đang vận chuyển")
+                            {
+                                sbClass = "sb-shipping";
+                            }
+                            else if (d.TRANGTHAI == "Giao thành công")
+                            {
+                                sbClass = "sb-success";
+                            }
+                            else if (d.TRANGTHAI == "Đã hủy")
+                            {
+                                sbClass = "sb-cancel";
+                            }
+
+                            <tr class="@rowClass"
+                                onclick="window.location='@Url.Action("QuanLyDonHang","QLDonHangAdmin", new { id = d.MADH, keyword = keyword, statusFilter = statusFilter })'">
+                                <td class="cell-stt">@stt</td>
+                                <td>#@d.MADH</td>
+                                <td>@(d.NGUOIDUNG != null ? d.NGUOIDUNG.HOTEN : "Không rõ")</td>
+                                <td>@d.NGAYDAT.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@d.TONGTIEN.ToString("N0") ₫</td>
+                                <td>
+                                    <span class="status-badge-small @sbClass">
+                                        @d.TRANGTHAI
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <button type="button"
+                                            class="btn-view-order"
+                                            onclick="event.stopPropagation();window.location='@Url.Action("QuanLyDonHang","QLDonHangAdmin", new { id = d.MADH, keyword = keyword, statusFilter = statusFilter })'">
+                                        Xem / sửa
+                                    </button>
+                                </td>
+                            </tr>
+
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                Chưa có đơn hàng nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* MODAL XÁC NHẬN HỦY – ĐẶT Ở CUỐI FILE *@
+@if (Model.DonHang != null)
+{
+    var don = Model.DonHang;
+    bool canCancel = don.TRANGTHAI == "Chờ xác nhận" || don.TRANGTHAI == "Đang vận chuyển";
+
+    if (canCancel)
+    {
+        <div class="modal fade"
+             id="modalHuyDon"
+             tabindex="-1"
+             aria-labelledby="modalHuyDonLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="modalHuyDonLabel">
+                            Xác nhận hủy đơn hàng
+                        </h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Bạn có chắc chắn muốn hủy đơn hàng
+                            <strong>#@don.MADH</strong> không?
+                        </p>
+                        <p class="text-muted mb-0" style="font-size:.85rem;">
+                            Sau khi hủy, trạng thái sẽ chuyển sang
+                            <strong>Đã hủy</strong> và không thể quay lại trạng thái trước đó.
+                        </p>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button"
+                                class="btn btn-outline-secondary btn-sm"
+                                data-bs-dismiss="modal">
+                            Đóng
+                        </button>
+
+                        @using (Html.BeginForm("HuyDonHang", "QLDonHangAdmin", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("id", don.MADH)
+                            @Html.Hidden("keyword", keyword)
+                            @Html.Hidden("statusFilter", statusFilter)
+
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-x-circle"></i> Xác nhận hủy
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

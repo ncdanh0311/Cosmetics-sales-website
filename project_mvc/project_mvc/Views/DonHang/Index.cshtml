@@ -1,0 +1,431 @@
+﻿@model IEnumerable<project_mvc.Models.DONHANG>
+
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/View.cshtml";
+}
+
+<style>
+    /* ====== WRAPPER CHUNG ====== */
+    .order-page {
+        background: #f9fafb;
+        padding: 20px 10px;
+    }
+
+    .order-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* ====== TIÊU ĐỀ ====== */
+    .order-header {
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        padding: 16px 20px;
+        border-radius: 18px;
+        color: #fff;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+    }
+
+    .order-header-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .order-header-sub {
+        font-size: 0.9rem;
+        opacity: 0.95;
+    }
+
+    .order-header-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    /* ====== TOOLBAR LỌC ====== */
+    .order-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+        .order-toolbar label {
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+    .order-filter-select {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid #e5e7eb;
+        font-size: 0.9rem;
+        background: #ffffff;
+        outline: none;
+    }
+
+        .order-filter-select:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 2px rgba(236,72,153,0.18);
+        }
+
+    /* ====== THÔNG BÁO ====== */
+    .order-alert {
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+    }
+
+    .order-alert-success {
+        background: #ecfdf3;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .order-alert-error {
+        background: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+    }
+
+    /* ====== BẢNG ĐƠN HÀNG ====== */
+    .orders-table-wrapper {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 12px 26px rgba(15,23,42,0.08);
+        overflow: hidden;
+    }
+
+    table.orders-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .orders-table thead {
+        background: #fdf2ff;
+    }
+
+    .orders-table th {
+        padding: 11px 12px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #6b21a8;
+        border-bottom: 2px solid #f5d0fe;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .orders-table tbody tr {
+        transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    }
+
+        .orders-table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #fef2ff;
+            box-shadow: inset 3px 0 0 #ec4899;
+            transform: translateY(-1px);
+        }
+
+    .orders-table td {
+        padding: 12px 12px;
+        font-size: 0.92rem;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: middle;
+    }
+
+    /* ====== CỘT MÃ ĐƠN / TIỀN / NGÀY ====== */
+    .order-id-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .order-date {
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    .order-address {
+        font-size: 0.9rem;
+        color: #111827;
+    }
+
+    .order-total {
+        font-weight: 700;
+        color: #b91c1c;
+        font-size: 1.1rem;
+    }
+
+    /* ====== TRẠNG THÁI (4 MÀU) ====== */
+    .status-pill {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: none;
+    }
+
+    /* 1. Chờ giao hàng */
+    .status-pending {
+        background: #fef3c7;
+        border: 1px solid #fcd34d;
+        color: #92400e;
+    }
+
+    /* 2. Đang vận chuyển */
+    .status-shipping {
+        background: #dbeafe;
+        border: 1px solid #60a5fa;
+        color: #1d4ed8;
+    }
+
+    /* 3. Giao thành công */
+    .status-success {
+        background: #dcfce7;
+        border: 1px solid #4ade80;
+        color: #166534;
+    }
+
+    /* 4. Đã hủy */
+    .status-cancel {
+        background: #fee2e2;
+        border: 1px solid #fca5a5;
+        color: #b91c1c;
+    }
+
+    /* ====== NÚT XEM CHI TIẾT ====== */
+    .btn-order-detail {
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: #FF9EBB;
+        color: #ffffff !important;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 4px 10px rgba(79,70,229,0.35);
+        transition: 0.15s ease;
+    }
+
+        .btn-order-detail:hover {
+            opacity: .93;
+            transform: translateY(-1px);
+        }
+
+    /* ====== EMPTY STATE ====== */
+    .order-empty-box {
+        background: #ffffff;
+        padding: 35px 20px;
+        text-align: center;
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+        margin-top: 10px;
+    }
+
+    .order-empty-box-icon {
+        font-size: 42px;
+        color: #fb7185;
+        margin-bottom: 10px;
+    }
+
+    .order-empty-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #111827;
+    }
+
+    .order-empty-text {
+        font-size: 0.92rem;
+        color: #6b7280;
+        margin-bottom: 10px;
+    }
+
+    .order-empty-link {
+        display: inline-block;
+        padding: 7px 16px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        color: #ffffff !important;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .order-empty-link:hover {
+            opacity: .92;
+        }
+</style>
+
+<div class="order-page">
+    <div class="order-container">
+
+        <div class="order-header">
+            <div>
+                <div class="order-header-title">Đơn hàng của tôi</div>
+                <div class="order-header-sub">Theo dõi trạng thái các đơn đã đặt</div>
+            </div>
+            <div class="order-header-icon">
+                <i class="fa-solid fa-receipt"></i>
+            </div>
+        </div>
+
+        @* TOOLBAR LỌC TRẠNG THÁI *@
+        <div class="order-toolbar">
+            <label for="orderFilter">Lọc theo trạng thái:</label>
+            <select id="orderFilter" class="order-filter-select">
+                <option value="all">Hiện tất cả</option>
+                <option value="Chờ xác nhận">Chờ xác nhận</option>
+                <option value="Đang vận chuyển">Đang vận chuyển</option>
+                <option value="Giao thành công">Giao thành công</option>
+                <option value="Đã hủy">Đã hủy</option>
+            </select>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="order-alert order-alert-success">
+                @TempData["Success"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="order-alert order-alert-error">
+                @TempData["Error"]
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="order-empty-box">
+                <div class="order-empty-box-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div class="order-empty-title">Chưa có đơn hàng nào</div>
+                <div class="order-empty-text">
+                    Bạn hãy mua sắm và quay lại để xem trạng thái đơn hàng nhé.
+                </div>
+                <a href="@Url.Action("ShowSP", "SanPham")" class="order-empty-link">
+                    <i class="fa-solid fa-shop me-1"></i> Tiếp tục mua sắm
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="orders-table-wrapper">
+                <table class="orders-table" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Ngày đặt</th>
+                            <th>Địa chỉ giao</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dh in Model.OrderByDescending(d => d.NGAYDAT)) // SẮP XẾP NGÀY ĐẶT GIẢM DẦN
+                        {
+                            string statusClass;
+                            switch (dh.TRANGTHAI)
+                            {
+                                case "Đang vận chuyển":
+                                    statusClass = "status-shipping";
+                                    break;
+                                case "Giao thành công":
+                                    statusClass = "status-success";
+                                    break;
+                                case "Đã hủy":
+                                    statusClass = "status-cancel";
+                                    break;
+                                // mặc định: Chờ giao hàng
+                                default:
+                                    statusClass = "status-pending";
+                                    break;
+                            }
+
+                            <tr data-status="@dh.TRANGTHAI">
+                                <td>
+                                    <span class="order-id-badge">#@dh.MADH</span>
+                                </td>
+                                <td>
+                                    <div class="order-date">
+                                        @dh.NGAYDAT.ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="order-address">
+                                        @dh.DIACHI_GIAO
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="order-total">
+                                        @dh.TONGTIEN.ToString("N0") ₫
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-pill @statusClass">
+                                        @dh.TRANGTHAI
+                                    </span>
+                                </td>
+                                <td>
+                                    <a class="btn-order-detail"
+                                       href="@Url.Action("ChiTiet", "DonHang", new { id = dh.MADH })">
+                                        <i class="fa-solid fa-eye"></i>
+                                        Xem chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    (function () {
+        var filterSelect = document.getElementById('orderFilter');
+        if (!filterSelect) return;
+
+        filterSelect.addEventListener('change', function () {
+            var value = this.value;
+            var rows = document.querySelectorAll('#ordersTable tbody tr');
+
+            rows.forEach(function (row) {
+                var status = row.getAttribute('data-status') || '';
+                if (value === 'all' || status === value) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    })();
+</script>

@@ -1,0 +1,258 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\home\\about.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\home\\about.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|c:\\users\\kieup\\onedrive\\desktop\\nhom_thefaceshop\\project_mvc\\project_mvc\\views\\camnanglamdep\\camnanglamdep.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\camnanglamdep\\camnanglamdep.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\shared\\view.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\shared\\view.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\hotrokhachhang\\hotrokhachhang.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\hotrokhachhang\\hotrokhachhang.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\controllers\\sanphamcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\controllers\\sanphamcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\qlthuonghieuadmin\\quanlythuonghieu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\qlthuonghieuadmin\\quanlythuonghieu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\shared\\layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\shared\\layoutadmin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\taikhoanadmin\\quanlytaikhoan.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\taikhoanadmin\\quanlytaikhoan.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\thongkeadmin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\thongkeadmin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\controllers\\thongkeadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\controllers\\thongkeadmincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\models\\thongketongquandonhangviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\models\\thongketongquandonhangviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\models\\thongkedoanhthuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\models\\thongkedoanhthuviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\models\\donhang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\models\\donhang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\views\\donhang\\chitiet.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F1F233EA-6EA6-47A4-A229-FF751DB4C0CE}|project_mvc\\project_mvc.csproj|solutionrelative:project_mvc\\views\\donhang\\chitiet.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "HoTroKhachHang.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\HoTroKhachHang\\HoTroKhachHang.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\HoTroKhachHang\\HoTroKhachHang.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\HoTroKhachHang\\HoTroKhachHang.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\HoTroKhachHang\\HoTroKhachHang.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T04:16:36.274Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CamNangLamDep.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\CamNangLamDep\\CamNangLamDep.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\CamNangLamDep\\CamNangLamDep.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\CamNangLamDep\\CamNangLamDep.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\CamNangLamDep\\CamNangLamDep.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T04:10:15.143Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SanPhamController.cs",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Controllers\\SanPhamController.cs",
+              "RelativeDocumentMoniker": "project_mvc\\Controllers\\SanPhamController.cs",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Controllers\\SanPhamController.cs",
+              "RelativeToolTip": "project_mvc\\Controllers\\SanPhamController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-07T04:07:34.248Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "About.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\Home\\About.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\Home\\About.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\Home\\About.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\Home\\About.cshtml",
+              "ViewState": "AgIAAHYKAAAAAAAAAAApwIwKAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T04:03:12.177Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "View.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\Shared\\View.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\Shared\\View.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\Shared\\View.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\Shared\\View.cshtml",
+              "ViewState": "AgIAAPkGAAAAAAAAAAApwAEHAABgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T04:01:21.773Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "QuanLyTaiKhoan.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\TaiKhoanAdmin\\QuanLyTaiKhoan.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\TaiKhoanAdmin\\QuanLyTaiKhoan.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\TaiKhoanAdmin\\QuanLyTaiKhoan.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\TaiKhoanAdmin\\QuanLyTaiKhoan.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T03:58:49.858Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "QuanLyThuongHieu.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\QLThuongHieuAdmin\\QuanLyThuongHieu.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\QLThuongHieuAdmin\\QuanLyThuongHieu.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\QLThuongHieuAdmin\\QuanLyThuongHieu.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\QLThuongHieuAdmin\\QuanLyThuongHieu.cshtml",
+              "ViewState": "AgIAABEBAAAAAAAAAAAnwCQBAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T03:57:53.394Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "layoutAdmin.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\Shared\\layoutAdmin.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\Shared\\layoutAdmin.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\Shared\\layoutAdmin.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\Shared\\layoutAdmin.cshtml",
+              "ViewState": "AgIAAKQBAAAAAAAAAAArwMEBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T03:57:35.262Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ThongKeTongQuanDonHangViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Models\\ThongKeTongQuanDonHangViewModel.cs",
+              "RelativeDocumentMoniker": "project_mvc\\Models\\ThongKeTongQuanDonHangViewModel.cs",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Models\\ThongKeTongQuanDonHangViewModel.cs",
+              "RelativeToolTip": "project_mvc\\Models\\ThongKeTongQuanDonHangViewModel.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAqwEYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-07T03:49:53.491Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\ThongKeAdmin\\Index.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\ThongKeAdmin\\Index.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\ThongKeAdmin\\Index.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\ThongKeAdmin\\Index.cshtml",
+              "ViewState": "AgIAAHkAAAAAAAAAAAAjwJUAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T03:41:30.84Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ThongKeDoanhThuViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Models\\ThongKeDoanhThuViewModel.cs",
+              "RelativeDocumentMoniker": "project_mvc\\Models\\ThongKeDoanhThuViewModel.cs",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Models\\ThongKeDoanhThuViewModel.cs",
+              "RelativeToolTip": "project_mvc\\Models\\ThongKeDoanhThuViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-07T03:40:04.148Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ThongKeAdminController.cs",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Controllers\\ThongKeAdminController.cs",
+              "RelativeDocumentMoniker": "project_mvc\\Controllers\\ThongKeAdminController.cs",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Controllers\\ThongKeAdminController.cs",
+              "RelativeToolTip": "project_mvc\\Controllers\\ThongKeAdminController.cs",
+              "ViewState": "AgIAAH8AAAAAAAAAAAAqwKoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-07T03:33:42.798Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "DONHANG.cs",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Models\\DONHANG.cs",
+              "RelativeDocumentMoniker": "project_mvc\\Models\\DONHANG.cs",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Models\\DONHANG.cs",
+              "RelativeToolTip": "project_mvc\\Models\\DONHANG.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-07T03:37:49.149Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ChiTiet.cshtml",
+              "DocumentMoniker": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\DonHang\\ChiTiet.cshtml",
+              "RelativeDocumentMoniker": "project_mvc\\Views\\DonHang\\ChiTiet.cshtml",
+              "ToolTip": "C:\\Users\\kieup\\OneDrive\\Desktop\\Nhom_TheFaceShop\\project_mvc\\project_mvc\\Views\\DonHang\\ChiTiet.cshtml",
+              "RelativeToolTip": "project_mvc\\Views\\DonHang\\ChiTiet.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-07T03:33:06.526Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

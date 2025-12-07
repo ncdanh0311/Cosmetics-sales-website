@@ -1,0 +1,478 @@
+﻿@model project_mvc.Models.QuanLyThuongHieuViewModel
+
+@{
+    ViewBag.Title = "Quản lý thương hiệu";
+    Layout = "~/Views/Shared/layoutAdmin.cshtml";
+    bool isEdit = ViewBag.IsEdit != null && (bool)ViewBag.IsEdit;
+}
+
+@section Styles {
+    <style>
+        /* =========================
+           PALETTE & BASE
+        ========================== */
+        :root {
+            --hs-primary: #ec4899; /* hồng pastel */
+            --hs-primary-soft: #fdf2f8;
+            --hs-primary-strong: #db2777;
+            --hs-border: #e5e7eb;
+            --hs-bg-page: #f5f7fb;
+            --hs-text-main: #111827;
+            --hs-text-muted: #6b7280;
+        }
+
+        body {
+            background-color: var(--hs-bg-page);
+        }
+
+        .page-header-box {
+            background: linear-gradient(135deg, #f9a8d4 0%, #ec4899 45%, #db2777 100%);
+            padding: 20px 22px;
+            border-radius: 18px;
+            color: #fff;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.28);
+        }
+
+        .page-header-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .page-header-sub {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .page-header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            font-size: 0.78rem;
+        }
+
+            .page-header-badge i {
+                font-size: 0.9rem;
+            }
+
+        /* =========================
+           CARD FORM & TABLE
+        ========================== */
+        .form-card,
+        .table-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px 18px 20px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .form-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .form-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at top right, rgba(236, 72, 153, 0.06), transparent 55%);
+                pointer-events: none;
+            }
+
+        .form-card-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-title-main {
+            font-weight: 650;
+            color: var(--hs-text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .card-title-main i {
+                color: var(--hs-primary);
+            }
+
+        .card-sub-text {
+            font-size: 0.8rem;
+            color: var(--hs-text-muted);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--hs-text-main);
+            font-size: 0.9rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px !important;
+            border-color: #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--hs-primary);
+                box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.25);
+            }
+
+        .text-danger.small {
+            font-size: 0.8rem;
+        }
+
+        /* Sticky form bên trái */
+        .sticky-form {
+            position: sticky;
+            top: 84px;
+        }
+
+        /* Danh sách thương hiệu cuộn riêng (nếu nhiều) */
+        .brand-list-scroll {
+            max-height: calc(100vh - 160px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+            .brand-list-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .brand-list-scroll::-webkit-scrollbar-track {
+                background: #f3f4f6;
+            }
+
+            .brand-list-scroll::-webkit-scrollbar-thumb {
+                background: #cbd5f5;
+                border-radius: 999px;
+            }
+
+        .table-hover tbody tr {
+            cursor: pointer;
+            transition: background-color 0.12s ease, transform 0.05s ease;
+        }
+
+            .table-hover tbody tr:hover {
+                background-color: #fdf2f8;
+            }
+
+        .table > :not(caption) > * > * {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .table thead th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--hs-text-muted);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Cột STT chung */
+        .table td.stt-cell {
+            width: 44px;
+            text-align: center;
+            position: relative;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        /* Thanh ngang + đổi màu khi là dòng đang select */
+        .table tr.row-selected td.stt-cell {
+            color: #db2777; /* màu số */
+            font-weight: 700;
+        }
+
+            .table tr.row-selected td.stt-cell::after {
+                content: "";
+                position: absolute;
+                left: 6px;
+                right: 6px;
+                bottom: 3px;
+                height: 3px;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #fb7185, #ec4899, #db2777);
+            }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--hs-primary), var(--hs-primary-strong));
+            border: none;
+            border-radius: 999px;
+            padding: 7px 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, var(--hs-primary-strong), var(--hs-primary));
+            }
+
+        .btn-secondary {
+            border-radius: 999px;
+            font-size: 0.86rem;
+        }
+
+        .btn-icon-text i {
+            margin-right: 4px;
+        }
+
+        .btn-action-full {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            transition: 0.25s;
+        }
+
+        /* Sửa */
+        .btn-edit-full {
+            background: #fce7f3;
+            color: #db2777;
+        }
+
+            .btn-edit-full:hover {
+                background: #fbcfe8;
+                box-shadow: 0 4px 10px rgba(219, 39, 119, 0.25);
+            }
+
+        /* Xóa */
+        .btn-delete-full {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+            .btn-delete-full:hover {
+                background: #fecaca;
+                box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25);
+            }
+
+        /* Alert pill */
+        .alert {
+            border-radius: 999px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            font-size: 0.86rem;
+        }
+
+            .alert i {
+                margin-right: 6px;
+            }
+
+        @@media (max-width: 991.98px) {
+            .sticky-form {
+                position: static;
+            }
+
+            .brand-list-scroll {
+                max-height: none;
+            }
+        }
+    </style>
+}
+
+<div class="page-header-box d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+        <div class="page-header-badge mb-1">
+            <i class="bi bi-stars"></i>
+            <span>Quản lý thương hiệu sản phẩm</span>
+        </div>
+        <div class="page-header-title mb-1">
+            <i class="bi bi-tags-fill me-1"></i> Quản lý thương hiệu
+        </div>
+        <div class="page-header-sub">
+            Thêm, chỉnh sửa thông tin thương hiệu hiển thị trên website THE FACE SHOP.
+        </div>
+    </div>
+</div>
+
+<!-- Thông báo -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3">
+        <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-3">
+        <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4 align-items-start">
+    <!-- Form thêm / sửa -->
+    <div class="col-lg-4">
+        <div class="form-card sticky-form">
+            <div class="form-card-inner">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="card-title-main mb-1">
+                            @if (Model.ThuongHieu.MATH == 0)
+                            {
+                                <span><i class="bi bi-plus-circle"></i> Thêm thương hiệu mới</span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-pencil-square"></i> Sửa thương hiệu (#@Model.ThuongHieu.MATH)</span>
+                            }
+                        </h5>
+                        <div class="card-sub-text">
+                            Điền tên và mô tả ngắn gọn để khách dễ nhận diện thương hiệu.
+                        </div>
+                    </div>
+                </div>
+
+                @using (Html.BeginForm("LuuThuongHieu", "QLThuongHieuAdmin", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.ThuongHieu.MATH)
+
+                    <div class="mb-3">
+                        <label class="form-label">Tên thương hiệu</label>
+                        @Html.TextBoxFor(m => m.ThuongHieu.TENTH,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "Nhập tên thương hiệu (VD: Innisfree, Laneige...)",
+                                required = "required"
+                            })
+                        @Html.ValidationMessageFor(m => m.ThuongHieu.TENTH, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        @Html.TextAreaFor(m => m.ThuongHieu.MOTA,
+                            4, 50,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "Giới thiệu ngắn về phong cách, xuất xứ, đối tượng phù hợp..."
+                            })
+                        @Html.ValidationMessageFor(m => m.ThuongHieu.MOTA, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <a href="@Url.Action("QuanLyThuongHieu", "QLThuongHieuAdmin", new { id = (int?)null })"
+                           class="btn btn-secondary btn-sm btn-icon-text">
+                            <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                        </a>
+
+                        <button type="submit" class="btn btn-primary btn-sm btn-icon-text">
+                            @if (Model.ThuongHieu.MATH == 0)
+                            {
+                                <span><i class="bi bi-check-circle"></i> Thêm mới</span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-save"></i> Lưu thay đổi</span>
+                            }
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách thương hiệu -->
+    <div class="col-lg-8">
+        <div class="table-card brand-list-scroll">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h5 class="mb-1">
+                        <i class="bi bi-list-ul me-1"></i> Danh sách thương hiệu
+                    </h5>
+                    <div class="card-sub-text">
+                        Nhấp vào một dòng để chỉnh sửa nhanh thương hiệu đó.
+                    </div>
+                </div>
+
+                <a href="@Url.Action("QuanLyThuongHieu", "QLThuongHieuAdmin", new { id = (int?)null })"
+                   class="btn btn-primary btn-sm btn-icon-text">
+                    <i class="bi bi-plus-circle"></i> Thêm thương hiệu
+                </a>
+            </div>
+
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Mã TH</th>
+                        <th>Tên thương hiệu</th>
+                        <th>Mô tả</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DanhSach != null && Model.DanhSach.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model.DanhSach)
+                        {
+                            var isSelected = Model.ThuongHieu != null && item.MATH == Model.ThuongHieu.MATH;
+
+                            <tr class="@(isSelected ? "row-selected" : "")"
+                                onclick="window.location='@Url.Action("QuanLyThuongHieu", "QLThuongHieuAdmin", new { id = item.MATH })'">
+                                <td class="stt-cell">@stt</td>
+                                <td>@item.MATH</td>
+                                <td>@item.TENTH</td>
+                                <td>@item.MOTA</td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("QuanLyThuongHieu", "QLThuongHieuAdmin", new { id = item.MATH })"
+                                       class="btn-action-full btn-edit-full me-1"
+                                       title="Sửa"
+                                       onclick="event.stopPropagation();">
+                                        <i class="bi bi-pencil-fill"></i> Sửa
+                                    </a>
+
+                                    @using (Html.BeginForm("XoaThuongHieu", "QLThuongHieuAdmin", FormMethod.Post,
+                                        new { onsubmit = "return confirm('Xóa thương hiệu này?');", @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.Hidden("id", item.MATH)
+                                        <button type="submit"
+                                                class="btn-action-full btn-delete-full"
+                                                title="Xóa"
+                                                onclick="event.stopPropagation();">
+                                            <i class="bi bi-trash-fill"></i> Xóa
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Chưa có thương hiệu nào trong hệ thống.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Nếu cần thêm JS riêng cho trang thương hiệu thì đặt ở đây -->
+}

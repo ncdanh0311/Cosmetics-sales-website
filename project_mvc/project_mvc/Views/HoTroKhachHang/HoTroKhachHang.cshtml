@@ -1,0 +1,379 @@
+﻿@model IEnumerable<project_mvc.Models.HoTroKhachHang>
+
+@{
+    Layout = "~/Views/Shared/View.cshtml";
+    ViewData["Title"] = "Hỗ trợ khách hàng";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/HoTroKhachHang.css" />
+}
+
+<div class="support-page">
+    <div class="support-hero">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <p class="hero-eyebrow">TRUNG TÂM TRỢ GIÚP</p>
+                    <h1 class="hero-title">Bạn cần hỗ trợ điều gì hôm nay?</h1>
+                    <p class="hero-subtitle">
+                        Tụi mình ở đây để giải đáp mọi thắc mắc về đơn hàng, thanh toán,
+                        đổi trả, sản phẩm và chăm sóc da. Hãy bắt đầu bằng việc tìm kiếm câu hỏi của bạn nhé.
+                    </p>
+
+                    <div class="hero-search-box">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text"
+                                   class="form-control"
+                                   id="faqSearch"
+                                   placeholder="Nhập từ khóa: &quot;giao hàng&quot;, &quot;đổi trả&quot;, &quot;hạn sử dụng&quot;..." />
+                        </div>
+                    </div>
+
+                    <div class="hero-highlights">
+                        <div class="highlight-pill">
+                            <i class="bi bi-truck"></i> Giao hàng toàn quốc
+                        </div>
+                        <div class="highlight-pill">
+                            <i class="bi bi-shield-check"></i> 100% chính hãng
+                        </div>
+                        <div class="highlight-pill">
+                            <i class="bi bi-arrow-repeat"></i> Đổi trả trong 7 ngày*
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="hero-card">
+                        <h5 class="mb-3">
+                            <i class="bi bi-headset me-2"></i>Liên hệ nhanh
+                        </h5>
+                        <ul class="list-unstyled small mb-3">
+                            <li class="mb-2">
+                                <i class="bi bi-telephone-forward me-2"></i>
+                                Hotline: <strong>1900 9999</strong> (8:00 – 21:00)
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-messenger me-2"></i>
+                                Chat Facebook, Zalo: <span class="text-primary">THE FACE SHOP VN</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-envelope-open me-2"></i>
+                                Email: <a href="mailto:cs@thefaceshop.vn">cs@thefaceshop.vn</a>
+                            </li>
+                        </ul>
+                        <div class="hero-note">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Thời gian phản hồi trung bình: <strong>5–15 phút</strong> trong giờ làm việc.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="support-content py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- MAIN FAQ -->
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="section-title mb-0">Câu hỏi thường gặp</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0 bg-transparent p-0">
+                                <li class="breadcrumb-item">
+                                    <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">Hỗ trợ khách hàng</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                    <div class="faq-filter-pills mb-3">
+                        <button type="button"
+                                class="btn btn-sm btn-outline-primary rounded-pill me-2 mb-2 filter-category active-cat"
+                                data-cat="all">
+                            <i class="bi bi-stars me-1"></i>Tất cả
+                        </button>
+
+                        @foreach (var cat in Model.Select(m => m.Category).Distinct())
+                        {
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary rounded-pill me-2 mb-2 filter-category"
+                                    data-cat="@cat">
+                                @cat
+                            </button>
+                        }
+                    </div>
+
+                    <div id="faqEmptyState" class="faq-empty-state d-none">
+                        <div class="empty-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <p class="mb-1 fw-semibold">Không tìm thấy câu hỏi phù hợp</p>
+                        <p class="text-muted small mb-2">
+                            Bạn thử dùng từ khóa khác, hoặc gửi thẳng câu hỏi cho tụi mình nhé.
+                        </p>
+                        <a href="#askBox" class="btn btn-sm btn-primary">
+                            Gửi câu hỏi ngay
+                        </a>
+                    </div>
+
+                    <div class="accordion" id="faqAccordion">
+                        @foreach (var item in Model.Select((faq, index) => new { faq, index }))
+                        {
+                            var isPopular = item.faq.Category == "Đơn hàng"
+                                         || item.faq.Category == "Thanh toán"
+                                         || item.faq.Category == "Đổi trả";
+
+                            <div class="accordion-item mb-2 faq-item"
+                                 data-cat="@item.faq.Category"
+                                 data-search="@((item.faq.Question + " " + item.faq.Answer).ToLower())">
+
+                                <h2 class="accordion-header" id="heading-@item.index">
+                                    <button class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse-@item.index"
+                                            aria-expanded="false"
+                                            aria-controls="collapse-@item.index">
+                                        <div class="w-100 d-flex align-items-center justify-content-between">
+                                            <span>@item.faq.Question</span>
+                                            <span class="faq-meta">
+                                                <span class="badge bg-light text-muted me-1">
+                                                    <i class="bi bi-tag me-1"></i>@item.faq.Category
+                                                </span>
+                                                @if (isPopular)
+                                                {
+                                                    <span class="badge bg-warning-subtle text-warning fw-normal">
+                                                        <i class="bi bi-fire me-1"></i>Phổ biến
+                                                    </span>
+                                                }
+                                            </span>
+                                        </div>
+                                    </button>
+                                </h2>
+
+                                <div id="collapse-@item.index"
+                                     class="accordion-collapse collapse"
+                                     aria-labelledby="heading-@item.index"
+                                     data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        @Html.Raw(item.faq.Answer.Replace("\n", "<br/>"))
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- SIDEBAR -->
+                <aside class="col-lg-4">
+                    <div class="sticky-top" style="top: 80px;">
+                        <div class="card mb-3 shadow-sm border-0 support-card">
+                            <div class="card-body">
+                                <h6 class="card-title mb-2">
+                                    <i class="bi bi-layers-half me-1"></i>Nhóm câu hỏi nổi bật
+                                </h6>
+                                <ul class="list-unstyled mb-0 small">
+                                    <li class="mb-1">
+                                        <button type="button"
+                                                class="sidebar-link btn-link filter-category"
+                                                data-cat="Đơn hàng">
+                                            Đơn hàng &amp; hủy đơn
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button type="button"
+                                                class="sidebar-link btn-link filter-category"
+                                                data-cat="Vận chuyển">
+                                            Giao hàng &amp; phí ship
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button type="button"
+                                                class="sidebar-link btn-link filter-category"
+                                                data-cat="Thanh toán">
+                                            Thanh toán &amp; hóa đơn
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button type="button"
+                                                class="sidebar-link btn-link filter-category"
+                                                data-cat="Đổi trả">
+                                            Đổi trả &amp; hoàn tiền
+                                        </button>
+                                    </li>
+                                    <li class="mb-1">
+                                        <button type="button"
+                                                class="sidebar-link btn-link filter-category"
+                                                data-cat="Sản phẩm">
+                                            Sản phẩm &amp; hạn sử dụng
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 support-card" id="askBox">
+                            <div class="card-body">
+                                <h6 class="card-title mb-2">
+                                    <i class="bi bi-question-circle me-1"></i>Không tìm thấy câu trả lời?
+                                </h6>
+                                <p class="small text-muted mb-3">
+                                    Hãy gửi câu hỏi cho tụi mình. Đội ngũ CSKH sẽ phản hồi qua email hoặc liên hệ trực tiếp trong thời gian sớm nhất.
+                                </p>
+
+                                <form method="post" action="@Url.Action("SendQuestion", "HoTroKhachHang")">
+                                    <div class="mb-2">
+                                        <textarea id="questionBox"
+                                                  name="body"
+                                                  class="form-control"
+                                                  rows="3"
+                                                  placeholder=""></textarea>
+                                        <span id="errorTooltip" class="custom-tooltip">
+                                            Vui lòng nhập nội dung câu hỏi!
+                                        </span>
+                                        <div class="d-flex justify-content-end small text-muted mt-1">
+                                            <span id="questionCounter">0 / 500</span>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-primary w-100" type="submit" id="sendBtn">
+                                        <i class="bi bi-send me-1"></i>Gửi câu hỏi
+                                    </button>
+                                </form>
+
+                                <div class="small text-muted mt-2">
+                                    <i class="bi bi-shield-lock me-1"></i>
+                                    Thông tin của bạn được bảo mật theo chính sách riêng tư của THE FACE SHOP.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP MESSAGE -->
+<div id="popupMessage" class="popup-message">
+    <div class="popup-box">
+        <span id="popupText"></span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // --- TempData popup ---
+            var success = @Html.Raw(System.Web.Helpers.Json.Encode(TempData["SuccessMessage"]));
+            var error = @Html.Raw(System.Web.Helpers.Json.Encode(TempData["ErrorMessage"]));
+
+            if (success || error) {
+                var popup = document.getElementById("popupMessage");
+                var popupText = document.getElementById("popupText");
+
+                popupText.textContent = success || error;
+                popup.classList.remove("success", "error");
+                popup.classList.add(success ? "success" : "error");
+                popup.style.display = "flex";
+
+                setTimeout(function () {
+                    popup.style.opacity = "0";
+                    setTimeout(function () {
+                        popup.style.display = "none";
+                        popup.style.opacity = "1";
+                    }, 500);
+                }, 3000);
+            }
+
+            // --- Category filter ---
+            var filterButtons = document.querySelectorAll(".filter-category");
+            var faqItems = document.querySelectorAll(".faq-item");
+            var emptyState = document.getElementById("faqEmptyState");
+
+            function applyFilter() {
+                var activeBtn = document.querySelector(".filter-category.active-cat");
+                var cat = activeBtn ? activeBtn.getAttribute("data-cat") : "all";
+                var query = (document.getElementById("faqSearch").value || "").toLowerCase();
+
+                var visibleCount = 0;
+
+                faqItems.forEach(function (item) {
+                    var itemCat = item.getAttribute("data-cat");
+                    var searchContent = item.getAttribute("data-search") || "";
+
+                    var matchCat = (cat === "all") || (itemCat === cat);
+                    var matchSearch = !query || searchContent.indexOf(query) !== -1;
+
+                    if (matchCat && matchSearch) {
+                        item.classList.remove("d-none");
+                        visibleCount++;
+                    } else {
+                        item.classList.add("d-none");
+                    }
+                });
+
+                if (visibleCount === 0) {
+                    emptyState.classList.remove("d-none");
+                } else {
+                    emptyState.classList.add("d-none");
+                }
+            }
+
+            filterButtons.forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    filterButtons.forEach(function (b) {
+                        b.classList.remove("active-cat");
+                    });
+                    this.classList.add("active-cat");
+                    applyFilter();
+                });
+            });
+
+            // --- Search ---
+            var searchInput = document.getElementById("faqSearch");
+            if (searchInput) {
+                searchInput.addEventListener("input", function () {
+                    applyFilter();
+                });
+            }
+
+            // --- Validate question & character counter ---
+            var questionBox = document.getElementById("questionBox");
+            var errorTooltip = document.getElementById("errorTooltip");
+            var sendBtn = document.getElementById("sendBtn");
+            var counter = document.getElementById("questionCounter");
+            var maxChars = 500;
+
+            if (questionBox && counter) {
+                questionBox.addEventListener("input", function () {
+                    var length = this.value.length;
+                    if (length > maxChars) {
+                        this.value = this.value.substring(0, maxChars);
+                        length = maxChars;
+                    }
+                    counter.textContent = length + " / " + maxChars;
+                });
+            }
+
+            if (sendBtn && questionBox && errorTooltip) {
+                sendBtn.addEventListener("click", function (e) {
+                    if (!questionBox.value.trim()) {
+                        e.preventDefault();
+                        errorTooltip.classList.add("show");
+                        setTimeout(function () {
+                            errorTooltip.classList.remove("show");
+                        }, 2000);
+                    }
+                });
+            }
+        });
+    </script>
+}
