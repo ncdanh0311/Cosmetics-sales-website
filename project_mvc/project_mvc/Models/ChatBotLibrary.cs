@@ -70,7 +70,7 @@ namespace project_mvc.Models
 
                 var raw = File.ReadAllText(path);
                 var data = JsonConvert.DeserializeObject<List<ChatBotEntry>>(raw);
-                return data ?? Array.Empty<ChatBotEntry>();
+                return data ?? new List<ChatBotEntry>();
             }
             catch
             {
