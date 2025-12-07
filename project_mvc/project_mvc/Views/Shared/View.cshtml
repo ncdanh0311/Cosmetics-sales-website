@@ -4378,31 +4378,22 @@
             };
 
             async function sendToChatboiApi(question) {
-                const payload = {
-                    message: question,
-                    context: "Tư vấn mỹ phẩm The Face Shop, hỗ trợ giao hàng, ưu đãi, chăm sóc da, chọn quà tặng.",
-                    temperature: 0.4
-                };
+                const payload = { message: question };
 
-                const headers = { "Content-Type": "application/json" };
-                if (window.chatboiApiKey) {
-                    headers["Authorization"] = `Bearer ${window.chatboiApiKey}`;
-                }
-
-                const response = await fetch("https://api.chatboiapi.com/v1/chat", {
+                const response = await fetch("@Url.Action("Ask", "ChatBotApi")", {
                     method: "POST",
-                    headers: headers,
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
-                    throw new Error("ChatBoiAPI trả về lỗi");
+                    throw new Error("ChatBot API trả về lỗi");
                 }
 
                 const data = await response.json();
+                if (data?.success && data?.answer) return data.answer;
                 if (data?.answer) return data.answer;
                 if (data?.message) return data.message;
-                if (data?.data?.answer) return data.data.answer;
 
                 return fallbackFromLibrary(question);
             }

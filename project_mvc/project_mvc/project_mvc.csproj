@@ -199,6 +199,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminBaseController.cs" />
+    <Compile Include="Controllers\ChatBotApiController.cs" />
     <Compile Include="Controllers\DonHangController.cs" />
     <Compile Include="Controllers\GioHangController.cs" />
     <Compile Include="Controllers\HoTroKhachHangController.cs" />
@@ -217,6 +218,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BeautyGuideHelper.cs" />
+    <Compile Include="Models\ChatBotTrainingData.cs" />
     <Compile Include="Models\BoLocSanPham.cs" />
     <Compile Include="Models\CamNangLamDep.cs" />
     <Compile Include="Models\CamNangLamDepViewModel.cs" />
