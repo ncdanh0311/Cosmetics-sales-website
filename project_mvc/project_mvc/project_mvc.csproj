@@ -199,6 +199,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminBaseController.cs" />
+    <Compile Include="Controllers\ChatBotApiController.cs" />
     <Compile Include="Controllers\DonHangController.cs" />
     <Compile Include="Controllers\GioHangController.cs" />
     <Compile Include="Controllers\HoTroKhachHangController.cs" />
