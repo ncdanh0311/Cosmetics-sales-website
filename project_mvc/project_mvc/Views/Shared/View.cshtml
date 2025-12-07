@@ -4382,7 +4382,7 @@
                     question: question
                 };
 
-                const response = await fetch("/ChatBotApi/Ask", {
+                const response = await fetch("/api/chatbot/ask", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
@@ -4412,12 +4412,12 @@
                 }
 
                 toggleTyping(true);
-                setStatus("Đang gửi đến ChatBot API nội bộ...");
+                setStatus("Đang gửi đến ChatBot Web API...");
 
                 let reply = "";
                 try {
                     reply = await sendToChatboiApi(text);
-                    setStatus("Đã phản hồi từ ChatBot API");
+                    setStatus("Đã phản hồi từ ChatBot Web API");
                 } catch (error) {
                     reply = fallbackFromLibrary(text);
                     setStatus("Đang dùng thư viện câu trả lời nhanh (offline)");
