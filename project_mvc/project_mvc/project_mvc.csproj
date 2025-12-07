@@ -199,6 +199,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminBaseController.cs" />
+    <Compile Include="Controllers\ChatBotApiController.cs" />
     <Compile Include="Controllers\DonHangController.cs" />
     <Compile Include="Controllers\GioHangController.cs" />
     <Compile Include="Controllers\HoTroKhachHangController.cs" />
@@ -220,6 +221,8 @@
     <Compile Include="Models\BoLocSanPham.cs" />
     <Compile Include="Models\CamNangLamDep.cs" />
     <Compile Include="Models\CamNangLamDepViewModel.cs" />
+    <Compile Include="Models\ChatBotLibrary.cs" />
+    <Compile Include="Models\ChatBotRequest.cs" />
     <Compile Include="Models\CartViewModel.cs" />
     <Compile Include="Models\CategoryFacetVM.cs" />
     <Compile Include="Models\CT_DONHANG.cs">
@@ -297,6 +300,7 @@
       <DependentUpon>TheFaceShop.edmx</DependentUpon>
     </Content>
     <Content Include="App_Data\CamNangLamDep.json" />
+    <Content Include="App_Data\chatbot-data.json" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\View.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
