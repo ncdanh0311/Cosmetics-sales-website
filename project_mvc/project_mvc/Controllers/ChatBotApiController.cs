@@ -1,32 +1,60 @@
-using System;
-using System.Linq;
+using System.IO;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using project_mvc.Models;
 
 namespace project_mvc.Controllers
 {
+    [RoutePrefix("api/chatbot")]
     public class ChatBotApiController : Controller
     {
         [HttpPost]
-        public JsonResult Ask(ChatBotRequest request)
+        [ValidateInput(false)]
+        [Route("ask")]
+        public JsonResult Ask()
         {
-            var question = (request?.Message ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(question))
+            var question = ExtractQuestion(Request);
+            var result = ChatBotLibrary.GetAnswer(question);
+
+            return Json(new
             {
-                return Json(new { success = false, message = "Câu hỏi không được để trống." });
+                answer = result.Answer,
+                matched = result.Matched
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        private static string ExtractQuestion(HttpRequestBase request)
+        {
+            if (request == null)
+            {
+                return null;
             }
 
-            var normalized = question.ToLowerInvariant();
-            var match = ChatBotTrainingData.Library.FirstOrDefault(item =>
-                item.Keywords.Any(keyword => normalized.Contains(keyword.ToLowerInvariant())));
+            var formQuestion = request["question"];
+            if (!string.IsNullOrWhiteSpace(formQuestion))
+            {
+                return formQuestion;
+            }
 
-            var answer = match?.Answer ?? ChatBotTrainingData.DefaultAnswer;
-            return Json(new { success = true, answer });
+            try
+            {
+                request.InputStream.Position = 0;
+                using (var reader = new StreamReader(request.InputStream))
+                {
+                    var rawBody = reader.ReadToEnd();
+                    if (string.IsNullOrWhiteSpace(rawBody))
+                    {
+                        return null;
+                    }
+
+                    var model = JsonConvert.DeserializeObject<ChatBotRequest>(rawBody);
+                    return model?.Question;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
-    }
-
-    public class ChatBotRequest
-    {
-        public string Message { get; set; }
     }
 }

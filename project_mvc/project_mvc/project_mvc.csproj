@@ -190,6 +190,9 @@
       <DependentUpon>TheFaceShop.edmx</DependentUpon>
       <LastGenOutput>TheFaceShop.cs</LastGenOutput>
     </Content>
+    <Content Include="App_Data\chatbot-data.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\about.js" />
     <Content Include="Scripts\dangky.js" />
     <Content Include="Scripts\dangnhap.js" />
@@ -222,6 +225,8 @@
     <Compile Include="Models\BoLocSanPham.cs" />
     <Compile Include="Models\CamNangLamDep.cs" />
     <Compile Include="Models\CamNangLamDepViewModel.cs" />
+    <Compile Include="Models\ChatBotLibrary.cs" />
+    <Compile Include="Models\ChatBotRequest.cs" />
     <Compile Include="Models\CartViewModel.cs" />
     <Compile Include="Models\CategoryFacetVM.cs" />
     <Compile Include="Models\CT_DONHANG.cs">
@@ -299,6 +304,7 @@
       <DependentUpon>TheFaceShop.edmx</DependentUpon>
     </Content>
     <Content Include="App_Data\CamNangLamDep.json" />
+    <Content Include="App_Data\chatbot-data.json" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\View.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
