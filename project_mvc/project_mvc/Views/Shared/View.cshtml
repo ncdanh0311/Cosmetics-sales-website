@@ -4379,7 +4379,7 @@
 
             async function sendToChatboiApi(question) {
                 const payload = {
-                    question: question
+                    message: question
                 };
 
                 const response = await fetch("/api/chatbot/ask", {
