@@ -221,6 +221,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BeautyGuideHelper.cs" />
+    <Compile Include="Models\ChatBotTrainingData.cs" />
     <Compile Include="Models\BoLocSanPham.cs" />
     <Compile Include="Models\CamNangLamDep.cs" />
     <Compile Include="Models\CamNangLamDepViewModel.cs" />

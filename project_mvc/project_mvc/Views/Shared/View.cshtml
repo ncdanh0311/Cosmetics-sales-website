@@ -2241,9 +2241,9 @@
                 }
 
                 const data = await response.json();
+                if (data?.success && data?.answer) return data.answer;
                 if (data?.answer) return data.answer;
                 if (data?.message) return data.message;
-                if (data?.data?.answer) return data.data.answer;
 
                 return fallbackFromLibrary(question);
             }
