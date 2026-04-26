@@ -1,0 +1,9 @@
+/.vs/
+/[Oo]bj/
+/[Bb]in/
+/packages/
+*.user
+*.suo
+*.db
+*.vsidx
+*.bacpac
